@@ -12,15 +12,9 @@ struct WeekView: View {
 
     @EnvironmentObject var store: Store
 
-    var firstWeekdayOfTheMonth: Int
-
-    var headerHeight: CGFloat = 38
-
     var range: Range<Date> { store.today.date(dayOfWeek: 0)..<store.today.date(dayOfWeek: 7) }
 
-    init(firstWeekdayOfTheMonth: Int) {
-        self.firstWeekdayOfTheMonth = firstWeekdayOfTheMonth == 7 ? 0 : firstWeekdayOfTheMonth
-    }
+    init() { }
 
     func day(_ day: Int) -> Int {
         let date = store.calendar.date(byAdding: .day, value: day, to: store.dateComponents.date!)!
@@ -68,7 +62,7 @@ struct WeekView: View {
 struct WeekView_Previews: PreviewProvider {
 
     static var previews: some View {
-        WeekView(firstWeekdayOfTheMonth: 3)
+        WeekView()
             .environmentObject(
                 Store(today: Date())
                     .setItem(.init(id: "0", period: .allday(Date()), recurrenceRules: [

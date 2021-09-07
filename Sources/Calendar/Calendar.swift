@@ -30,7 +30,7 @@ public struct Calendar: View {
         Group {
             switch displayMode {
                 case .day: EmptyView()
-                case .week: EmptyView()
+                case .week: WeekView()
                 case .month: MonthView(firstWeekdayOfTheMonth: store.firstWeekdayOfTheMonth)
                 case .year: YearView()
             }
