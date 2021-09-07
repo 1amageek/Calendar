@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import RecurrenceRulePicker
 
 public struct Calendar: View {
 
@@ -46,6 +47,5 @@ struct Calendar_Previews: PreviewProvider {
             Calendar(.month, today: Date())
             Calendar(.year, today: Date())
         }
-
     }
 }
