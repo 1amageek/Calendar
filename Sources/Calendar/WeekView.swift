@@ -32,18 +32,17 @@ struct WeekView: View {
         return store.calendar.component(.month, from: date)
     }
 
-//    func header(size: CGSize) -> some View {
-//        LazyVGrid(columns: lanes, spacing: 0) {
-//            ForEach(store.calendar.weekdaySymbols, id: \.self) { weekdaySymbol in
-//                VStack {
-//                    Text("\(weekdaySymbol)")
-//                }
-//                .frame(maxWidth: .infinity, alignment: .trailing)
-//            }
-//        }
-//        .frame(height: headerHeight)
-//    }
-
+    func header() -> some View {
+        HStack(spacing: 0) {
+            ForEach(store.calendar.weekdaySymbols, id: \.self) { weekdaySymbol in
+                VStack {
+                    Text("\(weekdaySymbol)")
+                        .padding()
+                }
+                .frame(maxWidth: .infinity, alignment: .trailing)
+            }
+        }
+    }
 
     struct Item: TimeRange, Hashable {
         var id: String
@@ -51,24 +50,17 @@ struct WeekView: View {
     }
 
     var body: some View {
-        ZStack {
-            Timeline(store.items(range), range: range, columns: 7) { index in
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.green)
-                    .padding(1)
-                    .overlay {
-                        Text("\(index.id)")
-                    }
-            }
-            VStack {
-                Text("\(store.items(range)[1].range.lowerBound)")
-                    .font(.system(size: 30))
-                Text("\(store.items(range)[1].range.upperBound)")
-                    .font(.system(size: 30))
-            }
-
+        Timeline(store.items(range), range: range, columns: 7) { index in
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color.green)
+                .padding(1)
+                .overlay {
+                    Text("\(index.id)")
+                }
         }
-
+        .safeAreaInset(edge: .top) {
+            header()
+        }
     }
 }
 
@@ -82,11 +74,7 @@ struct WeekView_Previews: PreviewProvider {
                     .setItem(.init(id: "0", period: .allday(Date()), recurrenceRules: [
                         RecurrenceRule(frequency: .daily, interval: 1)
                     ]))
-//                    .setItem(.init(id: "0",
-//                                   occurrenceDate: Date(),
-//                                   period: .byTime(Date().date(byAdding: .day, value: 1)..<Date().date(byAdding: .day, value: 2)),
-//                                   recurrenceRules: [RecurrenceRule(frequency: .daily, interval: 1)])
-                            )
+        )
 
     }
 }
