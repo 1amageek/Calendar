@@ -6,20 +6,24 @@
 //
 
 import Foundation
+import CoreGraphics
 
+public final class Store: ObservableObject {
 
-final class Store: ObservableObject {
+    @Published public var displayMode: CalendarDisplayMode
 
-    @Published var year: Int
+    @Published public var selectedDate: Date
 
-    @Published var month: Int
+    @Published public var items: [CalendarItem] = []
 
-    @Published var day: Int
+    @Published public var spacingForYear: CGFloat = 16
 
-    @Published var items: [Calendar.Item] = []
+    @Published public var spacingForMonth: CGFloat = 8
 
-    func items(_ range: Range<Date>) -> [Calendar.Item] {
-        return items.reduce(Array<Calendar.Item>()) { prev, item in
+    @Published var size: CGSize?
+
+    func items(_ range: Range<Date>) -> [CalendarItem] {
+        return items.reduce(Array<CalendarItem>()) { prev, item in
             let items = [item] + repeatItems(item, range: range)
             return prev + items
         }
@@ -31,35 +35,26 @@ final class Store: ObservableObject {
 
     var timeZone: TimeZone
 
-    var dateComponents: DateComponents
+    var year: Int {
+        return self.calendar.dateComponents([.day], from: self.selectedDate).day!
+    }
 
-    init(today: Date, calendar: Foundation.Calendar = Foundation.Calendar(identifier: .gregorian), timeZone: TimeZone = TimeZone.current) {
+    public init(displayMode: CalendarDisplayMode = .year, today: Date, calendar: Foundation.Calendar = Foundation.Calendar(identifier: .gregorian), timeZone: TimeZone = TimeZone.current) {
         self.today = today
         self.calendar = calendar
         self.timeZone = timeZone
-        let year: Int = calendar.component(.year, from: today)
-        let month: Int = calendar.component(.month, from: today)
-        let day: Int = calendar.component(.day, from: today)
-        self._year = Published(initialValue: year)
-        self._month = Published(initialValue: month)
-        self._day = Published(initialValue: day)
-        self.dateComponents = DateComponents(calendar: calendar, timeZone: timeZone, year: year, month: month, day: day)
+        self._displayMode = Published(initialValue: displayMode)
+        self._selectedDate = Published(initialValue: today)
     }
 
-    var firstWeekdayOfTheMonth: Int {
-        let dateComponents = DateComponents(calendar: calendar, timeZone: timeZone, year: year, month: month)
-        let firstWeekdayOfTheMonth = calendar.component(.weekday, from: dateComponents.date!)
-        return firstWeekdayOfTheMonth
-    }
-
-    func setItem(_ item: Calendar.Item) -> Self {
+    func setItem(_ item: CalendarItem) -> Self {
         self.items.append(item)
         return self
     }
 
-    func repeatItems(_ item: Calendar.Item, range: Range<Date>) -> [Calendar.Item] {
+    func repeatItems(_ item: CalendarItem, range: Range<Date>) -> [CalendarItem] {
         if item.recurrenceRules.isEmpty { return [] }
-        var items: [Calendar.Item] = []
+        var items: [CalendarItem] = []
 
         for rule in item.recurrenceRules {
             if case .endDate(let date) = rule.recurrenceEnd {
@@ -88,12 +83,12 @@ final class Store: ObservableObject {
                         let components = calendar.dateComponents([.calendar, .timeZone, .year, .month, .day], from: date)
                         switch item.period {
                             case .allday:
-                                let repeatItem: Calendar.Item = item.duplicate(period: .allday(date))
+                                let repeatItem: CalendarItem = item.duplicate(period: .allday(date))
                                 items.append(repeatItem)
                             case .byTime(let byTime):
                                 let startDate = calendar.setTime(components: components, date: byTime.lowerBound)
                                 let endDate = calendar.setTime(components: components, date: byTime.upperBound)
-                                let repeatItem: Calendar.Item = item.duplicate(period: .byTime((startDate..<endDate)))
+                                let repeatItem: CalendarItem = item.duplicate(period: .byTime((startDate..<endDate)))
                                 items.append(repeatItem)
                         }
                         count += 1
@@ -111,12 +106,12 @@ final class Store: ObservableObject {
                         let components = calendar.dateComponents([.calendar, .timeZone, .year, .month, .day], from: date)
                         switch item.period {
                             case .allday:
-                                let repeatItem: Calendar.Item = item.duplicate(period: .allday(date))
+                                let repeatItem: CalendarItem = item.duplicate(period: .allday(date))
                                 items.append(repeatItem)
                             case .byTime(let byTime):
                                 let startDate = calendar.setTime(components: components, date: byTime.lowerBound)
                                 let endDate = calendar.setTime(components: components, date: byTime.upperBound)
-                                let repeatItem: Calendar.Item = item.duplicate(period: .byTime((startDate..<endDate)))
+                                let repeatItem: CalendarItem = item.duplicate(period: .byTime((startDate..<endDate)))
                                 items.append(repeatItem)
                         }
                         count += 1

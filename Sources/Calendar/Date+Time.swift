@@ -23,10 +23,25 @@ extension Date {
         return calendar.date(byAdding: byAdding, value: value, to: self)!
     }
 
-    public func date(dateComponents: Set<Foundation.Calendar.Component>) -> Date {
+    public func date(components: Set<Foundation.Calendar.Component>) -> Date {
         let calendar = Foundation.Calendar(identifier: .gregorian)
-        let dateComponents = calendar.dateComponents(dateComponents, from: self)
+        let dateComponents = calendar.dateComponents(components, from: self)
         return calendar.date(from: dateComponents)!
+    }
+
+    public var day: Int {
+        let calendar = Foundation.Calendar(identifier: .gregorian)
+        return calendar.component(.day, from: self)
+    }
+
+    public var month: Int {
+        let calendar = Foundation.Calendar(identifier: .gregorian)
+        return calendar.component(.month, from: self)
+    }
+
+    public var year: Int {
+        let calendar = Foundation.Calendar(identifier: .gregorian)
+        return calendar.component(.year, from: self)
     }
 }
 
