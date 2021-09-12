@@ -28,12 +28,9 @@ public struct ForYear<Content>: View where Content: View {
     }
 
     func height(size: CGSize) -> CGFloat {
-        if case .year = store.displayMode {
-            let row = 12 / columns.count
-            let space = spacing * CGFloat(row - 1)
-            return (size.height - space) / CGFloat(row)
-        }
-        return size.height
+        let row = 12 / columns.count
+        let space = spacing * CGFloat(row - 1)
+        return (size.height - space) / CGFloat(row)
     }
 
     public var body: some View {
@@ -48,43 +45,45 @@ public struct ForYear<Content>: View where Content: View {
     }
 }
 
-struct ForYear_Previews: PreviewProvider {
-    static var previews: some View {
-        ForYear(2021, columns: [
-            GridItem(.flexible(), spacing: 0),
-            GridItem(.flexible(), spacing: 0),
-            GridItem(.flexible(), spacing: 0)
-        ]) { month in
-            ForMonth(9, year: 2021, columns: [
-                GridItem(.flexible(), spacing: 0),
-                GridItem(.flexible(), spacing: 0),
-                GridItem(.flexible(), spacing: 0),
-                GridItem(.flexible(), spacing: 0),
-                GridItem(.flexible(), spacing: 0),
-                GridItem(.flexible(), spacing: 0),
-                GridItem(.flexible(), spacing: 0)
-            ]) { _ in
-                LazyVGrid(columns: [
-                    GridItem(.flexible(), spacing: 0),
-                    GridItem(.flexible(), spacing: 0),
-                    GridItem(.flexible(), spacing: 0),
-                    GridItem(.flexible(), spacing: 0),
-                    GridItem(.flexible(), spacing: 0),
-                    GridItem(.flexible(), spacing: 0),
-                    GridItem(.flexible(), spacing: 0)
-                ], spacing: 0) {
-                    ForEach(Foundation.Calendar.current.shortWeekdaySymbols, id: \.self) { weekdaySymbol in
-                        VStack {
-                            Text("\(weekdaySymbol)")
-                        }
-                    }
-                }
-            } content: { date in
-                ForDay(date.day, month: 9, year: 2021) { a in
-                    Text("\(date.day)")
-                }
-            }
-        }
-        .environmentObject(Store(today: Date()))
-    }
-}
+//struct ForYear_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ForYear(2021, columns: [
+//            GridItem(.flexible(), spacing: 24),
+//            GridItem(.flexible(), spacing: 24),
+//            GridItem(.flexible(), spacing: 24)
+//        ]) { month in
+//            ForMonth(9, year: 2021, columns: [
+//                GridItem(.flexible(), spacing: 0),
+//                GridItem(.flexible(), spacing: 0),
+//                GridItem(.flexible(), spacing: 0),
+//                GridItem(.flexible(), spacing: 0),
+//                GridItem(.flexible(), spacing: 0),
+//                GridItem(.flexible(), spacing: 0),
+//                GridItem(.flexible(), spacing: 0)
+//            ]) { _ in
+//                LazyVGrid(columns: [
+//                    GridItem(.flexible(), spacing: 0),
+//                    GridItem(.flexible(), spacing: 0),
+//                    GridItem(.flexible(), spacing: 0),
+//                    GridItem(.flexible(), spacing: 0),
+//                    GridItem(.flexible(), spacing: 0),
+//                    GridItem(.flexible(), spacing: 0),
+//                    GridItem(.flexible(), spacing: 0)
+//                ], spacing: 0) {
+//                    ForEach(Foundation.Calendar.current.shortWeekdaySymbols, id: \.self) { weekdaySymbol in
+//                        VStack {
+//                            Text("\(weekdaySymbol)")
+//                        }
+//                    }
+//                }
+//            } content: { weekOfMonth in
+//                ForWeek(weekOfMonth, month: 9, year: 2021) { date in
+//                    ForDay(date.day, month: 9, year: 2021) { a in
+//                        Text("\(date.day)")
+//                    }
+//                }
+//            }
+//        }
+//        .environmentObject(Store(today: Date()))
+//    }
+//}

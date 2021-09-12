@@ -7,6 +7,14 @@
 
 import Foundation
 
+extension Foundation.Calendar {
+
+    public func startDate(date: Date) -> Date {
+        let dateComponents = self.dateComponents([.calendar, .timeZone, .year], from: date)
+        return self.date(from: dateComponents)!
+    }
+}
+
 extension Date {
 
     public var time: Int { Int(floor(self.timeIntervalSince1970)) }
@@ -16,6 +24,20 @@ extension Date {
         let dateComponents = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: self)
         let startDay = calendar.date(from: dateComponents)!
         return calendar.date(byAdding: .day, value: dayOfWeek, to: startDay)!
+    }
+
+    public func date(weekOfYear: Int) -> Date {
+        let calendar = Foundation.Calendar(identifier: .gregorian)
+        let dateComponents = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: self)
+        let startDay = calendar.date(from: dateComponents)!
+        return calendar.date(byAdding: .weekOfYear, value: weekOfYear, to: startDay)!
+    }
+
+    public func date(weekOfMonth: Int) -> Date {
+        let calendar = Foundation.Calendar(identifier: .gregorian)
+        let dateComponents = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: self)
+        let startDay = calendar.date(from: dateComponents)!
+        return calendar.date(byAdding: .weekOfMonth, value: weekOfMonth, to: startDay)!
     }
 
     public func date(byAdding: Foundation.Calendar.Component, value: Int) -> Date {
@@ -52,3 +74,4 @@ extension Range where Bound == Date {
 extension Int {
     public var date: Date { Date(timeIntervalSince1970: TimeInterval(self)) }
 }
+

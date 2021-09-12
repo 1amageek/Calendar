@@ -58,7 +58,7 @@ public struct CalendarItem: Identifiable, Hashable {
 }
 extension CalendarItem: TimeRange {
 
-    var range: Range<Date> {
+    public var range: Range<Date> {
         switch self.period {
             case .allday(let occurrenceDate):
                 let start = occurrenceDate.date(components: [.calendar, .timeZone, .year, .month, .day])

@@ -25,7 +25,7 @@ public struct ForMonth<Header, Content>: View where Header: View, Content: View 
 
     var header: (Int) -> Header
 
-    var content: (Date) -> Content
+    var content: (Int) -> Content
 
     var dateComponents: DateComponents
 
@@ -36,7 +36,7 @@ public struct ForMonth<Header, Content>: View where Header: View, Content: View 
                 calendar: Foundation.Calendar = Foundation.Calendar.current,
                 timeZone: TimeZone = TimeZone.current,
                 @ViewBuilder header: @escaping (Int) -> Header,
-                @ViewBuilder content: @escaping (Date) -> Content) {
+                @ViewBuilder content: @escaping (Int) -> Content) {
         self.dateComponents = DateComponents(calendar: calendar, timeZone: timeZone, year: year, month: month)
         self.month = month
         self.year = year
@@ -73,16 +73,21 @@ public struct ForMonth<Header, Content>: View where Header: View, Content: View 
         }
     }
 
+    func width(size: CGSize) -> CGFloat {
+        size.width / 7
+    }
+
     func date(_ offset: Int) -> Date {
         return calendar.date(byAdding: .day, value: offset, to: dateComponents.date!)!
     }
 
+
     public var body: some View {
         GeometryReader { proxy in
-            LazyVGrid(columns: columns, spacing: 0, pinnedViews: [.sectionHeaders]) {
+            LazyVStack(alignment: .center, spacing: 0, pinnedViews: [.sectionHeaders]) {
                 Section {
-                    ForEach(0..<35) { index in
-                        content(date(index - firstWeekdayOfTheMonth))
+                    ForEach(0..<5) { index in
+                        content(index)
                             .frame(maxWidth: .infinity, minHeight: height(size: proxy.size))
                     }
                 } header: {
@@ -93,37 +98,39 @@ public struct ForMonth<Header, Content>: View where Header: View, Content: View 
     }
 }
 
-struct ForMonth_Previews: PreviewProvider {
-    static var previews: some View {
-        ForMonth(9, year: 2021, columns: [
-            GridItem(.flexible(), spacing: 0),
-            GridItem(.flexible(), spacing: 0),
-            GridItem(.flexible(), spacing: 0),
-            GridItem(.flexible(), spacing: 0),
-            GridItem(.flexible(), spacing: 0),
-            GridItem(.flexible(), spacing: 0),
-            GridItem(.flexible(), spacing: 0)
-        ]) { _ in
-            LazyVGrid(columns: [
-                GridItem(.flexible(), spacing: 0),
-                GridItem(.flexible(), spacing: 0),
-                GridItem(.flexible(), spacing: 0),
-                GridItem(.flexible(), spacing: 0),
-                GridItem(.flexible(), spacing: 0),
-                GridItem(.flexible(), spacing: 0),
-                GridItem(.flexible(), spacing: 0)
-            ], spacing: 0) {
-                ForEach(Foundation.Calendar.current.shortWeekdaySymbols, id: \.self) { weekdaySymbol in
-                    VStack {
-                        Text("\(weekdaySymbol)")
-                    }
-                }
-            }
-        } content: { date in
-            ForDay(date.day, month: 9, year: 2021) { a in
-                Text("\(date.day)")
-            }
-        }
-        .environmentObject(Store(today: Date()))
-    }
-}
+//struct ForMonth_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ForMonth(9, year: 2021, columns: [
+//            GridItem(.flexible(), spacing: 0),
+//            GridItem(.flexible(), spacing: 0),
+//            GridItem(.flexible(), spacing: 0),
+//            GridItem(.flexible(), spacing: 0),
+//            GridItem(.flexible(), spacing: 0),
+//            GridItem(.flexible(), spacing: 0),
+//            GridItem(.flexible(), spacing: 0)
+//        ]) { _ in
+//            LazyVGrid(columns: [
+//                GridItem(.flexible(), spacing: 0),
+//                GridItem(.flexible(), spacing: 0),
+//                GridItem(.flexible(), spacing: 0),
+//                GridItem(.flexible(), spacing: 0),
+//                GridItem(.flexible(), spacing: 0),
+//                GridItem(.flexible(), spacing: 0),
+//                GridItem(.flexible(), spacing: 0)
+//            ], spacing: 0) {
+//                ForEach(Foundation.Calendar.current.shortWeekdaySymbols, id: \.self) { weekdaySymbol in
+//                    VStack {
+//                        Text("\(weekdaySymbol)")
+//                    }
+//                }
+//            }
+//        } content: { weekOfMonth in
+//            ForWeek(weekOfMonth, month: 9, year: 2021) { date in
+//                ForDay(date.day, month: 9, year: 2021) { a in
+//                    Text("\(date.day)")
+//                }
+//            }
+//        }
+//        .environmentObject(Store(today: Date()))
+//    }
+//}

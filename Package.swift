@@ -17,11 +17,9 @@ let package = Package(
     targets: [
         .target(
             name: "Calendar",
-            dependencies: ["RecurrenceRulePicker"],
-            exclude: ["DemoCalendar"]),
+            dependencies: ["RecurrenceRulePicker"]),
         .testTarget(
             name: "CalendarTests",
-            dependencies: ["Calendar", "RecurrenceRulePicker"],
-            exclude: ["DemoCalendar"]),
+            dependencies: ["Calendar", "RecurrenceRulePicker"]),
     ]
 )

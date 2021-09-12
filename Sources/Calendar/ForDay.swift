@@ -11,29 +11,74 @@ public struct ForDay<Content>: View where Content: View {
 
     @EnvironmentObject var store: Store
 
-    var day: Int
+    @State var offset: CGPoint = .zero
 
-    var month: Int
+    var spacing: CGFloat
 
-    var year: Int
+    var content: (CalendarItem) -> Content
 
-    var content: (Date) -> Content
-
-    public init(_ day: Int, month: Int, year: Int, @ViewBuilder content: @escaping (Date) -> Content) {
-        self.day = day
-        self.month = month
-        self.year = year
+    public init(spacing: CGFloat = 4, @ViewBuilder content: @escaping (CalendarItem) -> Content) {
+        self.spacing = spacing
         self.content = content
     }
 
-    var date: Date {
-        let dateComponents: DateComponents = DateComponents(calendar: store.calendar, timeZone: store.timeZone, year: year, month: month, day: day)
-        return store.calendar.date(from: dateComponents)!
+    var dateFormatter: DateFormatter {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "YYYY年m月d日"
+        return dateFormatter
+    }
+
+    var weekdayFormatter: DateFormatter {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "E"
+        return dateFormatter
+    }
+
+    func header(dateRange: DateRange) -> some View {
+        HStack {
+            VStack(alignment: .leading) {
+                Text(store.selectedDate, formatter: dateFormatter)
+                Text(store.selectedDate, formatter: weekdayFormatter)
+            }
+            Spacer()
+        }
+    }
+
+    @ViewBuilder
+    func timeline(dateRange: DateRange) -> some View {
+        let range = dateRange.dateRange
+        Timeline(store.items(range), range: range, scrollViewOffset: $offset, columns: 1) { item in
+            content(item)
+        }.background(
+            TimelineBackground(dateRange) { date in
+                HStack {
+                    Spacer()
+                    Divider()
+                }
+            }
+        )
     }
 
     public var body: some View {
-        ZStack {
-            content(date)
+        let dateRange = DateRange(store.selectedDate, range: (0..<1), component: .day)
+        VStack {
+            header(dateRange: dateRange)
+                .frame(height: 44)
+            HStack {
+                GeometryReader { proxy in
+                    ScrollView(.vertical) {
+                        TimelineRuler()
+                            .frame(height: proxy.size.height)
+                            .offset(y: offset.y)
+                    }
+                }
+                .frame(width: 100)
+
+                GeometryReader { proxy in
+                    timeline(dateRange: dateRange)
+                        .frame(width: proxy.size.width, height: proxy.size.height)
+                }
+            }
         }
     }
 }
@@ -41,8 +86,17 @@ public struct ForDay<Content>: View where Content: View {
 
 struct ForDay_Previews: PreviewProvider {
     static var previews: some View {
-        ForDay(1, month: 09, year: 2021) { date in
-            Text("ww")
+        ForDay { date in
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color.green)
+                .padding(1)
+                .overlay {
+                    Text("\(date.id)")
+                }
         }
+        .environmentObject(
+            Store(displayMode: .week, today: Date())
+                .setItem(CalendarItem(id: "id", period: .allday(Date())))
+        )
     }
 }

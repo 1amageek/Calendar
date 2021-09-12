@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1235444826E973650026EA13 /* InfinityScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1235444726E973650026EA13 /* InfinityScrollView.swift */; };
+		1235444926E973650026EA13 /* InfinityScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1235444726E973650026EA13 /* InfinityScrollView.swift */; };
 		129B800E26E87F820015B2A4 /* DemoCalendarApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 129B800026E87F7F0015B2A4 /* DemoCalendarApp.swift */; };
 		129B800F26E87F820015B2A4 /* DemoCalendarApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 129B800026E87F7F0015B2A4 /* DemoCalendarApp.swift */; };
 		129B801026E87F820015B2A4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 129B800126E87F7F0015B2A4 /* ContentView.swift */; };
@@ -17,6 +19,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1235444726E973650026EA13 /* InfinityScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfinityScrollView.swift; sourceTree = "<group>"; };
 		129B800026E87F7F0015B2A4 /* DemoCalendarApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoCalendarApp.swift; sourceTree = "<group>"; };
 		129B800126E87F7F0015B2A4 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		129B800226E87F820015B2A4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -57,6 +60,7 @@
 			children = (
 				129B800026E87F7F0015B2A4 /* DemoCalendarApp.swift */,
 				129B800126E87F7F0015B2A4 /* ContentView.swift */,
+				1235444726E973650026EA13 /* InfinityScrollView.swift */,
 				129B800226E87F820015B2A4 /* Assets.xcassets */,
 			);
 			path = Shared;
@@ -179,6 +183,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1235444826E973650026EA13 /* InfinityScrollView.swift in Sources */,
 				129B801026E87F820015B2A4 /* ContentView.swift in Sources */,
 				129B800E26E87F820015B2A4 /* DemoCalendarApp.swift in Sources */,
 			);
@@ -188,6 +193,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1235444926E973650026EA13 /* InfinityScrollView.swift in Sources */,
 				129B801126E87F820015B2A4 /* ContentView.swift in Sources */,
 				129B800F26E87F820015B2A4 /* DemoCalendarApp.swift in Sources */,
 			);

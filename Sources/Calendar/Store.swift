@@ -16,9 +16,9 @@ public final class Store: ObservableObject {
 
     @Published public var items: [CalendarItem] = []
 
-    @Published public var spacingForYear: CGFloat = 16
+    @Published public var spacingForYear: CGFloat = 24
 
-    @Published public var spacingForMonth: CGFloat = 8
+    @Published public var spacingForMonth: CGFloat = 12
 
     @Published var size: CGSize?
 

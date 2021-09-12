@@ -38,16 +38,31 @@ public struct Calendar<Content>: View where Content: View {
     var content: (Date) -> Content
 
     func columnsForYear(_ size: CGSize? = nil) -> [GridItem] {
-        if case .year = store.displayMode {
-            return [
+
+        switch store.displayMode {
+            case .year: return [
                 GridItem(.flexible(), spacing: store.spacingForYear),
                 GridItem(.flexible(), spacing: store.spacingForYear),
                 GridItem(.flexible(), spacing: store.spacingForYear)
             ]
+            case .month: return [
+                GridItem(.flexible(), spacing: store.spacingForYear)
+            ]
+            case .week, .day: return [
+                //                GridItem(.flexible(), spacing: store.spacingForYear),
+                //                GridItem(.flexible(), spacing: store.spacingForYear),
+                //                GridItem(.flexible(), spacing: store.spacingForYear),
+                //                GridItem(.flexible(), spacing: store.spacingForYear),
+                //                GridItem(.flexible(), spacing: store.spacingForYear),
+                //                GridItem(.flexible(), spacing: store.spacingForYear),
+                //                GridItem(.flexible(), spacing: store.spacingForYear),
+                //                GridItem(.flexible(), spacing: store.spacingForYear),
+                //                GridItem(.flexible(), spacing: store.spacingForYear),
+                //                GridItem(.flexible(), spacing: store.spacingForYear),
+                //                GridItem(.flexible(), spacing: store.spacingForYear),
+                GridItem(.flexible(), spacing: store.spacingForYear)
+            ]
         }
-        return [
-            GridItem(.flexible(), spacing: store.spacingForYear)
-        ]
     }
 
     func columnsForMonth(_ size: CGSize? = nil) -> [GridItem] {
@@ -89,31 +104,107 @@ public struct Calendar<Content>: View where Content: View {
         }
     }
 
-    public var body: some View {
-        ScrollViewReader { scrollViewProxy in
-            ForYear(store.year, columns: columnsForYear(), spacing: store.spacingForYear) { month in
-                ForMonth(month, year: store.year, columns: columnsForMonth(), spacing: store.spacingForMonth, calendar: store.calendar, timeZone: store.timeZone) { _ in
-                    header
-                } content: { date in
-                    ForDay(date.day, month: month, year: store.year) { date in
-                        content(date)
-                    }
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        withAnimation {
-                            self.store.selectedDate = date
-                        }
-                    }
-                    .tag(date)
-                    .onReceive(store.$selectedDate) { newValue in
-                        scrollViewProxy.scrollTo(newValue)
-                    }
-                    .onReceive(store.$displayMode) { newValue in
-                        scrollViewProxy.scrollTo(newValue)
-                    }
+//    var forYear: some View {
+//        GeometryReader { geometryProxy in
+//            ScrollViewReader { scrollViewProxy in
+//                ScrollView {
+//                    ForYear(store.year, columns: columnsForYear(), spacing: store.spacingForYear) { month in
+//                        ForMonth(month, year: store.year, columns: columnsForMonth(), spacing: store.spacingForMonth, calendar: store.calendar, timeZone: store.timeZone) { _ in
+//                            header
+//                        } content: { weekOfMonth in
+//                            ForWeek(weekOfMonth, month: month, year: store.year) { date in
+//                                ForDay(date.day, month: month, year: store.year) { date in
+//                                    content(date)
+//                                }
+//                                .contentShape(Rectangle())
+//                                .onTapGesture {
+//                                    withAnimation {
+//                                        self.store.selectedDate = date
+//                                    }
+//                                }
+//                                .tag(date)
+//                                .onReceive(store.$selectedDate) { newValue in
+//                                    scrollViewProxy.scrollTo(newValue)
+//                                }
+//                                .onReceive(store.$displayMode) { newValue in
+//                                    scrollViewProxy.scrollTo(newValue)
+//                                }
+//                            }
+//                        }
+//                    }
+//                    .frame(height: geometryProxy.size.height)
+//                    .compositingGroup()
+//                }
+//            }
+//        }
+//    }
+//
+//    var forMonth: some View {
+//        GeometryReader { geometryProxy in
+//            ScrollViewReader { scrollViewProxy in
+//                ScrollView {
+//                    ForYear(store.year, columns: columnsForYear(), spacing: store.spacingForYear) { month in
+//                        ForMonth(month, year: store.year, columns: columnsForMonth(), spacing: store.spacingForMonth, calendar: store.calendar, timeZone: store.timeZone) { _ in
+//                            header
+//                        } content: { weekOfMonth in
+//                            ForWeek(weekOfMonth, month: month, year: store.year) { date in
+//                                ForDay(date.day, month: month, year: store.year) { date in
+//                                    content(date)
+//                                }
+//                                .contentShape(Rectangle())
+//                                .onTapGesture {
+//                                    withAnimation {
+//                                        self.store.selectedDate = date
+//                                    }
+//                                }
+//                                .tag(date)
+//                                .onReceive(store.$selectedDate) { newValue in
+//                                    scrollViewProxy.scrollTo(newValue)
+//                                }
+//                                .onReceive(store.$displayMode) { newValue in
+//                                    scrollViewProxy.scrollTo(newValue)
+//                                }
+//                            }
+//                        }
+//                        .frame(height: geometryProxy.size.height)
+//                    }
+//                    .frame(height: geometryProxy.size.height * 12)
+//                    .compositingGroup()
+//                }
+//            }
+//        }
+//    }
+
+    var forWeek: some View {
+        ForWeek { date in
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color.green)
+                .padding(1)
+                .overlay {
+                    Text("\(date.id)")
                 }
+        }
+    }
+
+    var forDay: some View {
+        ForDay { date in
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color.green)
+                .padding(1)
+                .overlay {
+                    Text("\(date.id)")
+                }
+        }
+    }
+
+    public var body: some View {
+        Group {
+            switch store.displayMode {
+//                case .year: forYear
+//                case .month: forMonth
+                case .week: forWeek
+                default: forDay
             }
-            .compositingGroup()
         }
         .environmentObject(store)
     }
@@ -123,7 +214,8 @@ struct Calendar_Previews: PreviewProvider {
 
     struct ContentView: View {
 
-        @StateObject var store: Store = Store(displayMode: .year, today: Date())
+        @StateObject var store: Store = Store(displayMode: .week, today: Date())
+            .setItem(CalendarItem(id: "id", period: .allday(Date())))
 
         var height: CGFloat? {
             switch store.displayMode {
@@ -145,14 +237,6 @@ struct Calendar_Previews: PreviewProvider {
                     }
                 }
                 .pickerStyle(SegmentedPickerStyle())
-//                GeometryReader { proxy in
-//                    ScrollView {
-//
-//                        .frame(height: height)
-//                    }.background(GeometryReader { proxy in
-//                        Rectangle().fill(Color.clear).onAppear { store.size = proxy.size }
-//                    })
-//                }
                 Calendar { date in
                     if store.selectedDate == date {
                         Circle()

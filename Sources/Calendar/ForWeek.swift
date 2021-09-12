@@ -1,6 +1,6 @@
 //
-//  SwiftUIView.swift
-//  SwiftUIView
+//  ForWeek.swift
+//  ForWeek
 //
 //  Created by nori on 2021/09/08.
 //
@@ -11,70 +11,90 @@ public struct ForWeek<Content>: View where Content: View {
 
     @EnvironmentObject var store: Store
 
-    var month: Int
+    @State var offset: CGPoint = .zero
 
-    var year: Int
+    var spacing: CGFloat
 
-    var calendar: Foundation.Calendar
+    var content: (CalendarItem) -> Content
 
-    var timeZone: TimeZone
+    var dateFormatter: DateFormatter
 
-    var content: (Int) -> Content
-
-    var dateComponents: DateComponents
-
-    public init(_ month: Int, year: Int, calendar: Foundation.Calendar = Foundation.Calendar.current, timeZone: TimeZone = TimeZone.current, @ViewBuilder content: @escaping (Int) -> Content) {
-        self.dateComponents = DateComponents(calendar: calendar, timeZone: timeZone, year: year, month: month)
-        self.month = month
-        self.year = year
-        self.calendar = calendar
-        self.timeZone = timeZone
+    public init(spacing: CGFloat = 4, @ViewBuilder content: @escaping (CalendarItem) -> Content) {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "E"
+        self.dateFormatter = dateFormatter
+        self.spacing = spacing
         self.content = content
     }
 
+    func header(dateRange: DateRange) -> some View {
+        LazyVGrid(columns: dateRange.map { _ in GridItem(.flexible(), spacing: 0) }) {
+            ForEach(dateRange) { date in
+                HStack {
+                    if store.calendar.isDateInToday(date) {
+                        Circle()
+                            .fill(Color.red)
+                            .frame(width: 32, height: 32)
+                            .overlay {
+                                Text("\(date.day)")
+                            }
+                    } else {
+                        Text("\(date.day)")
+                    }
 
-    var headerHeight: CGFloat = 38
-
-    var firstWeekdayOfTheMonth: Int {
-        let firstWeekdayOfTheMonth = calendar.component(.weekday, from: dateComponents.date!)
-        return firstWeekdayOfTheMonth == 7 ? 0 : firstWeekdayOfTheMonth
-    }
-
-    func day(_ day: Int) -> Int {
-        let date = calendar.date(byAdding: .day, value: day, to: dateComponents.date!)!
-        return calendar.component(.day, from: date)
-    }
-
-    func month(_ day: Int) -> Int {
-        let date = calendar.date(byAdding: .day, value: day, to: dateComponents.date!)!
-        return calendar.component(.month, from: date)
-    }
-
-    func header(size: CGSize) -> some View {
-        LazyVGrid(columns: columns(size: size), spacing: 0) {
-            ForEach(calendar.shortWeekdaySymbols, id: \.self) { weekdaySymbol in
-                VStack {
-                    Text("\(weekdaySymbol)")
+                    Text(date, formatter: dateFormatter)
                 }
             }
         }
-        .frame(height: headerHeight)
     }
 
-    func columns(size: CGSize) -> [GridItem] {
-        return calendar.weekdaySymbols.map({ _ in GridItem(.flexible(), spacing: 0, alignment: .center) })
+    @ViewBuilder
+    func timeline(dateRange: DateRange) -> some View {
+        let range = dateRange.dateRange
+        VStack {
+            header(dateRange: dateRange)
+                .frame(height: 44)
+            Timeline(store.items(range), range: range, scrollViewOffset: $offset) { item in
+                content(item)
+            }.background(
+                TimelineBackground(dateRange) { date in
+                    HStack {
+                        Spacer()
+                        Divider()
+                    }
+                }
+            )
+        }
     }
 
     public var body: some View {
-        GeometryReader { proxy in
-            LazyVGrid(columns: columns(size: proxy.size), spacing: 0, pinnedViews: [.sectionHeaders]) {
-                Section {
-                    ForEach(0..<35) { index in
-                        content(day(index - firstWeekdayOfTheMonth))
-                        .frame(maxWidth: .infinity, minHeight: (proxy.size.height - headerHeight) / 5)
+        HStack {
+
+            GeometryReader { proxy in
+                ScrollView(.vertical) {
+                    TimelineRuler()
+                        .frame(height: proxy.size.height)
+                        .offset(y: offset.y)
+                }
+            }
+            .frame(width: 100)
+            .padding(.top, 44)
+
+            GeometryReader { proxy in
+                ScrollViewReader { scrollViewProxy in
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        LazyHGrid(rows: [GridItem(.fixed(proxy.size.height))]) {
+                            ForEach(DateRange(store.selectedDate, range: -100..<100, component: .weekOfYear)) { weekOfYear in
+                                let dateRange = DateRange(weekOfYear, range: (0..<7), component: .day)
+                                timeline(dateRange: dateRange)
+                                .frame(width: proxy.size.width, height: proxy.size.height)
+                                .id(weekOfYear.weekOfYearTag)
+                            }
+                        }
                     }
-                } header: {
-                    header(size: proxy.size)
+                    .onAppear {
+                        scrollViewProxy.scrollTo(store.selectedDate.weekOfYearTag)
+                    }
                 }
             }
         }
@@ -83,10 +103,17 @@ public struct ForWeek<Content>: View where Content: View {
 
 struct ForWeek_Previews: PreviewProvider {
     static var previews: some View {
-        ForWeek(9, year: 2021) { day in
-            ForDay(day, month: 9, year: 2021) { a in
-                Text("\(day)")
-            }
+        ForWeek() { date in
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color.green)
+                .padding(1)
+                .overlay {
+                    Text("\(date.id)")
+                }
         }
+        .environmentObject(
+            Store(displayMode: .week, today: Date())
+                .setItem(CalendarItem(id: "id", period: .allday(Date())))
+        )
     }
 }
