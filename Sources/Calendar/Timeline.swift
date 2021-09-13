@@ -145,6 +145,7 @@ public struct TimelineRuler: View {
                 ForEach(range) { index in
                     let frame = rect(index: index, size: proxy.size)
                     HStack {
+                        Spacer()
                         Text("\(index):00")
                     }
                     .frame(width: frame.width, height: frame.height)

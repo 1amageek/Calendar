@@ -13,11 +13,21 @@ extension Foundation.Calendar {
         let dateComponents = self.dateComponents([.calendar, .timeZone, .year], from: date)
         return self.date(from: dateComponents)!
     }
+
+    public func firstDayOfTheWeek(date: Date) -> Date {
+        let dateComponents = self.dateComponents([.yearForWeekOfYear, .weekOfYear], from: date)
+        return self.date(from: dateComponents)!
+    }
 }
 
 extension Date {
 
     public var time: Int { Int(floor(self.timeIntervalSince1970)) }
+
+    public var firstDayOfTheWeek: Date {
+        let calendar = Foundation.Calendar(identifier: .gregorian)
+        return calendar.firstDayOfTheWeek(date: self)
+    }
 
     public func date(dayOfWeek: Int) -> Date {
         let calendar = Foundation.Calendar(identifier: .gregorian)
