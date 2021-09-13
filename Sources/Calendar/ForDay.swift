@@ -100,6 +100,6 @@ struct ForDay_Previews: PreviewProvider {
                     Text("\(date.id)")
                 }
         }
-        .environmentObject(Store(displayMode: .week, today: Date()))
+        .environmentObject(Store(today: Date()))
     }
 }

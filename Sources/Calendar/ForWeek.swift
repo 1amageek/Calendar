@@ -115,9 +115,6 @@ struct ForWeek_Previews: PreviewProvider {
                     Text("\(date.id)")
                 }
         }
-        .environmentObject(
-            Store(displayMode: .week, today: Date())
-                .setItem(CalendarItem(id: "id", period: .allday(Date())))
-        )
+        .environmentObject(Store(today: Date()))
     }
 }

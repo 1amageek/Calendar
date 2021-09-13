@@ -46,14 +46,14 @@ public struct Calendar<Data, Content>: View where Data: RandomAccessCollection, 
 
     var header: some View {
         LazyVGrid(columns: [
-            GridItem(.flexible(), spacing: store.spacingForMonth),
-            GridItem(.flexible(), spacing: store.spacingForMonth),
-            GridItem(.flexible(), spacing: store.spacingForMonth),
-            GridItem(.flexible(), spacing: store.spacingForMonth),
-            GridItem(.flexible(), spacing: store.spacingForMonth),
-            GridItem(.flexible(), spacing: store.spacingForMonth),
-            GridItem(.flexible(), spacing: store.spacingForMonth)
-        ], spacing: store.spacingForMonth) {
+            GridItem(.flexible(), spacing: 0),
+            GridItem(.flexible(), spacing: 0),
+            GridItem(.flexible(), spacing: 0),
+            GridItem(.flexible(), spacing: 0),
+            GridItem(.flexible(), spacing: 0),
+            GridItem(.flexible(), spacing: 0),
+            GridItem(.flexible(), spacing: 0)
+        ], spacing: 0) {
             ForEach(Foundation.Calendar.current.shortWeekdaySymbols, id: \.self) { weekdaySymbol in
                 VStack {
                     Text("\(weekdaySymbol)")
@@ -108,18 +108,6 @@ struct Calendar_Previews: PreviewProvider {
     struct ContentView: View {
 
         @StateObject var store: Store = Store(displayMode: .week, today: Date())
-
-        var height: CGFloat? {
-            switch store.displayMode {
-                case .year, .month: return store.size?.height
-                default:
-                    if let height = store.size?.height {
-                        return height * 12
-                    } else {
-                        return nil
-                    }
-            }
-        }
 
         var body: some View {
             VStack {
