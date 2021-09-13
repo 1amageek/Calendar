@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import RecurrenceRulePicker
+import RecurrenceRule
 
 public protocol EventRepeatable: TimeRange {
 

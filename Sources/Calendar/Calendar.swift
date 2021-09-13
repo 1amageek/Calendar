@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import RecurrenceRulePicker
+import RecurrenceRule
 
 public enum CalendarDisplayMode: CaseIterable {
     case day

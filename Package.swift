@@ -12,14 +12,14 @@ let package = Package(
             targets: ["Calendar"]),
     ],
     dependencies: [
-        .package(name: "RecurrenceRulePicker", url: "git@github.com:1amageek/RecurrenceRulePicker.git", .branch("main"))
+        .package(name: "RecurrenceRule", url: "git@github.com:1amageek/RecurrenceRule.git", .branch("main")),
     ],
     targets: [
         .target(
             name: "Calendar",
-            dependencies: ["RecurrenceRulePicker"]),
+            dependencies: ["RecurrenceRule"]),
         .testTarget(
             name: "CalendarTests",
-            dependencies: ["Calendar", "RecurrenceRulePicker"]),
+            dependencies: ["Calendar", "RecurrenceRule"]),
     ]
 )

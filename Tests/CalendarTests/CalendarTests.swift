@@ -1,6 +1,5 @@
 import XCTest
 @testable import Calendar
-import RecurrenceRulePicker
 
 final class CalendarTests: XCTestCase {
 
