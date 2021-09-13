@@ -9,8 +9,13 @@ import Foundation
 
 extension Foundation.Calendar {
 
-    public func startDate(date: Date) -> Date {
+    public func firstDayOfTheYear(date: Date) -> Date {
         let dateComponents = self.dateComponents([.calendar, .timeZone, .year], from: date)
+        return self.date(from: dateComponents)!
+    }
+
+    public func firstDayOfTheMonth(date: Date) -> Date {
+        let dateComponents = self.dateComponents([.calendar, .timeZone, .year, .month], from: date)
         return self.date(from: dateComponents)!
     }
 
@@ -27,6 +32,11 @@ extension Date {
     public var firstDayOfTheWeek: Date {
         let calendar = Foundation.Calendar(identifier: .gregorian)
         return calendar.firstDayOfTheWeek(date: self)
+    }
+
+    public var firstDayOfTheMonth: Date {
+        let calendar = Foundation.Calendar(identifier: .gregorian)
+        return calendar.firstDayOfTheMonth(date: self)
     }
 
     public func date(dayOfWeek: Int) -> Date {
@@ -59,6 +69,11 @@ extension Date {
         let calendar = Foundation.Calendar(identifier: .gregorian)
         let dateComponents = calendar.dateComponents(components, from: self)
         return calendar.date(from: dateComponents)!
+    }
+
+    public var weekday: Int {
+        let calendar = Foundation.Calendar(identifier: .gregorian)
+        return calendar.component(.weekday, from: self)
     }
 
     public var day: Int {

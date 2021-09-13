@@ -78,7 +78,7 @@ struct Timeline<Data, Content>: View where Data: RandomAccessCollection, Data.El
 
     var body: some View {
         GeometryReader { proxy in
-            ScrollView(.vertical, showsIndicators: true) {
+            ScrollView(.vertical, showsIndicators: false) {
                 ZStack {
                     ForEach(items, id: \.self) { item in
                         ForEach(item.ranges, id: \.self) { range in
@@ -192,7 +192,7 @@ struct Timeline_Previews: PreviewProvider {
 
     static func date(weekOfYear: Int) -> Date {
         let calendar = Foundation.Calendar.current
-        return calendar.date(byAdding: .weekOfYear, value: weekOfYear, to: calendar.startDate(date: Date()))!
+        return calendar.date(byAdding: .weekOfYear, value: weekOfYear, to: calendar.firstDayOfTheYear(date: Date()))!
     }
 
     static var previews: some View {
