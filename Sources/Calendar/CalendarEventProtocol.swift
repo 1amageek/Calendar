@@ -22,7 +22,7 @@ public enum Period: Codable, Hashable {
     }
 }
 
-public protocol CalendarEventProtocol: Identifiable, Hashable {
+public protocol CalendarEventProtocol: Identifiable, Hashable, EventRepeatable {
 
     var id: String { get set }
 
@@ -55,18 +55,5 @@ extension CalendarEventProtocol {
 
     public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.hashValue == rhs.hashValue
-    }
-}
-
-extension CalendarEventProtocol where Self: TimeRange {
-
-    public var range: Range<Date> {
-        switch self.period {
-            case .allday(let occurrenceDate):
-                let start = occurrenceDate.date(components: [.calendar, .timeZone, .year, .month, .day])
-                let end = start.date(byAdding: .day, value: 1)
-                return (start..<end)
-            case .byTimes(let range): return range
-        }
     }
 }

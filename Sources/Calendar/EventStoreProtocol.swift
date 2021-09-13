@@ -1,46 +1,33 @@
 //
-//  Recurrenceable.swift
-//  Recurrenceable
+//  EventStore.swift
+//  EventStore
 //
 //  Created by nori on 2021/09/13.
 //
 
 import Foundation
-import RecurrenceRulePicker
-
-public protocol EventRepeatable {
-
-    var period: Period { get }
-
-    var occurrenceDate: Date { get }
-
-    var recurrenceRules: [RecurrenceRule] { get }
-
-    func duplicate(period: Period) -> Self
-}
 
 public protocol EventStoreProtocol {
 
-    associatedtype Event
+    associatedtype Element
 
-    var events: [Event] { get }
-
+    var events: [Element] { get }
 }
 
-extension EventStoreProtocol where Self.Event: EventRepeatable {
+extension EventStoreProtocol where Self.Element: EventRepeatable {
 
-    public func events(range: Range<Date>) -> [Event] {
+    public func events(range: Range<Date>) -> [Element] {
         if events.isEmpty { return [] }
-        return events.reduce(Array<Event>()) { prev, event in
+        return events.reduce(Array<Element>()) { prev, event in
             let events = [event] + repeatEvents(event, range: range)
             return prev + events
         }
     }
 
-    func repeatEvents(_ event: Event, range: Range<Date>) -> [Event] {
+    func repeatEvents(_ event: Element, range: Range<Date>) -> [Element] {
         if events.isEmpty { return [] }
         let calendar = Foundation.Calendar(identifier: .gregorian)
-        var events: [Event] = []
+        var events: [Element] = []
 
         for rule in event.recurrenceRules {
             if case .endDate(let date) = rule.recurrenceEnd {
@@ -69,12 +56,12 @@ extension EventStoreProtocol where Self.Event: EventRepeatable {
                         let components = calendar.dateComponents([.calendar, .timeZone, .year, .month, .day], from: date)
                         switch event.period {
                             case .allday:
-                                let repeatItem: Event = event.duplicate(period: .allday(date))
+                                let repeatItem: Element = event.duplicate(period: .allday(date))
                                 events.append(repeatItem)
                             case .byTimes(let byTime):
                                 let startDate = calendar.setTime(components: components, date: byTime.lowerBound)
                                 let endDate = calendar.setTime(components: components, date: byTime.upperBound)
-                                let repeatItem: Event = event.duplicate(period: .byTimes((startDate..<endDate)))
+                                let repeatItem: Element = event.duplicate(period: .byTimes((startDate..<endDate)))
                                 events.append(repeatItem)
                         }
                         count += 1
@@ -92,12 +79,12 @@ extension EventStoreProtocol where Self.Event: EventRepeatable {
                         let components = calendar.dateComponents([.calendar, .timeZone, .year, .month, .day], from: date)
                         switch event.period {
                             case .allday:
-                                let repeatItem: Event = event.duplicate(period: .allday(date))
+                                let repeatItem: Element = event.duplicate(period: .allday(date))
                                 events.append(repeatItem)
                             case .byTimes(let byTime):
                                 let startDate = calendar.setTime(components: components, date: byTime.lowerBound)
                                 let endDate = calendar.setTime(components: components, date: byTime.upperBound)
-                                let repeatItem: Event = event.duplicate(period: .byTimes((startDate..<endDate)))
+                                let repeatItem: Element = event.duplicate(period: .byTimes((startDate..<endDate)))
                                 events.append(repeatItem)
                         }
                         count += 1
@@ -114,12 +101,12 @@ extension EventStoreProtocol where Self.Event: EventRepeatable {
                         let components = calendar.dateComponents([.calendar, .timeZone, .year, .month, .day], from: date)
                         switch event.period {
                             case .allday:
-                                let repeatItem: Event = event.duplicate(period: .allday(date))
+                                let repeatItem: Element = event.duplicate(period: .allday(date))
                                 events.append(repeatItem)
                             case .byTimes(let byTime):
                                 let startDate = calendar.setTime(components: components, date: byTime.lowerBound)
                                 let endDate = calendar.setTime(components: components, date: byTime.upperBound)
-                                let repeatItem: Event = event.duplicate(period: .byTimes((startDate..<endDate)))
+                                let repeatItem: Element = event.duplicate(period: .byTimes((startDate..<endDate)))
                                 events.append(repeatItem)
                         }
                         count += 1
@@ -136,12 +123,12 @@ extension EventStoreProtocol where Self.Event: EventRepeatable {
                         let components = calendar.dateComponents([.calendar, .timeZone, .year, .month, .day], from: date)
                         switch event.period {
                             case .allday:
-                                let repeatItem: Event = event.duplicate(period: .allday(date))
+                                let repeatItem: Element = event.duplicate(period: .allday(date))
                                 events.append(repeatItem)
                             case .byTimes(let byTime):
                                 let startDate = calendar.setTime(components: components, date: byTime.lowerBound)
                                 let endDate = calendar.setTime(components: components, date: byTime.upperBound)
-                                let repeatItem: Event = event.duplicate(period: .byTimes((startDate..<endDate)))
+                                let repeatItem: Element = event.duplicate(period: .byTimes((startDate..<endDate)))
                                 events.append(repeatItem)
                         }
                         count += 1
@@ -152,4 +139,17 @@ extension EventStoreProtocol where Self.Event: EventRepeatable {
         return events
     }
 
+}
+
+extension Foundation.Calendar {
+    func setTime(components: DateComponents, date: Date) -> Date {
+        var components = components
+        let hour = self.component(.hour, from: date)
+        let minute = self.component(.minute, from: date)
+        let second = self.component(.second, from: date)
+        components.hour = hour
+        components.minute = minute
+        components.second = second
+        return self.date(from: components)!
+    }
 }

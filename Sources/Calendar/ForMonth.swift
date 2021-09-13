@@ -94,9 +94,23 @@ public struct ForMonth<Data, Content>: View where Data: RandomAccessCollection, 
 
 
 struct ForMonth_Previews: PreviewProvider {
+
+    struct Item: Hashable, TimeRange {
+
+        var range: Range<Date> { Date()..<Date().date(byAdding: .day, value: 1)}
+
+        static func == (lhs: Item, rhs: Item) -> Bool {
+            lhs.hashValue == rhs.hashValue
+        }
+
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(range)
+        }
+    }
+
     static var previews: some View {
-        ForMonth([CalendarItem(id: "id", period: .allday(Date()))]) { date in
-            Text("\(date.id)")
+        ForMonth([Item()]) { date in
+            Rectangle()
         }
         .environmentObject(Store(today: Date()))
         .previewInterfaceOrientation(.landscapeLeft)

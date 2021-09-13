@@ -106,14 +106,25 @@ public struct ForWeek<Data, Content>: View where Data: RandomAccessCollection, D
 }
 
 struct ForWeek_Previews: PreviewProvider {
+
+    struct Item: Hashable, TimeRange {
+
+        var range: Range<Date> { Date()..<Date().date(byAdding: .day, value: 1)}
+
+        static func == (lhs: Item, rhs: Item) -> Bool {
+            lhs.hashValue == rhs.hashValue
+        }
+
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(range)
+        }
+    }
+
     static var previews: some View {
-        ForWeek([CalendarItem(id: "id", period: .allday(Date()))]) { date in
+        ForWeek([Item()]) { date in
             RoundedRectangle(cornerRadius: 8)
                 .fill(Color.green)
-                .padding(1)
-                .overlay {
-                    Text("\(date.id)")
-                }
+                .padding(1)                
         }
         .environmentObject(Store(today: Date()))
     }

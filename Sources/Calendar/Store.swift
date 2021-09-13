@@ -28,16 +28,3 @@ public final class Store: ObservableObject {
         self._selectedDate = Published(initialValue: today)
     }
 }
-
-extension Foundation.Calendar {
-    func setTime(components: DateComponents, date: Date) -> Date {
-        var components = components
-        let hour = self.component(.hour, from: date)
-        let minute = self.component(.minute, from: date)
-        let second = self.component(.second, from: date)
-        components.hour = hour
-        components.minute = minute
-        components.second = second
-        return self.date(from: components)!
-    }
-}

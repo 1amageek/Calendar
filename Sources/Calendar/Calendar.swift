@@ -105,6 +105,28 @@ public struct Calendar<Data, Content>: View where Data: RandomAccessCollection, 
 
 struct Calendar_Previews: PreviewProvider {
 
+    struct CalendarEvent: Hashable, EventRepeatable {
+
+        var period: Period
+
+        var occurrenceDate: Date = Date()
+
+        var recurrenceRules: [RecurrenceRule] = [RecurrenceRule(frequency: .daily, interval: 2)]
+
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(occurrenceDate)
+            hasher.combine(period)
+        }
+
+        static func == (lhs: Calendar_Previews.CalendarEvent, rhs: Calendar_Previews.CalendarEvent) -> Bool {
+            lhs.hashValue == rhs.hashValue
+        }
+
+        func duplicate(period: Period) -> Calendar_Previews.CalendarEvent {
+            CalendarEvent(period: period)
+        }
+    }
+
     struct ContentView: View {
 
         @StateObject var store: Store = Store(displayMode: .week, today: Date())
@@ -117,13 +139,10 @@ struct Calendar_Previews: PreviewProvider {
                     }
                 }
                 .pickerStyle(SegmentedPickerStyle())
-                Calendar([CalendarItem(id: "id", period: .allday(Date()))]) { date in
+                Calendar([CalendarEvent(period: .allday(Date()))]) { date in
                     RoundedRectangle(cornerRadius: 8)
                         .fill(Color.green)
-                        .padding(1)
-                        .overlay {
-                            Text("\(date.id)")
-                        }
+                        .padding(1)                        
                 }
                 .environmentObject(store)
             }

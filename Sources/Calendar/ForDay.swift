@@ -91,13 +91,23 @@ public struct ForDay<Data, Content>: View where Data: RandomAccessCollection, Da
 
 
 struct ForDay_Previews: PreviewProvider {
+
+    struct Item: Hashable, TimeRange {
+
+        var range: Range<Date> { Date()..<Date().date(byAdding: .day, value: 1)}
+
+        static func == (lhs: Item, rhs: Item) -> Bool {
+            lhs.hashValue == rhs.hashValue
+        }
+    }
+
     static var previews: some View {
-        ForDay([CalendarItem(id: "id", period: .allday(Date()))]) { date in
+        ForDay([Item()]) { date in
             RoundedRectangle(cornerRadius: 8)
                 .fill(Color.green)
                 .padding(1)
                 .overlay {
-                    Text("\(date.id)")
+                    
                 }
         }
         .environmentObject(Store(today: Date()))

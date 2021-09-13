@@ -160,8 +160,18 @@ struct Month<Content>: View where Content: View {
 }
 
 struct ForYear_Previews: PreviewProvider {
+
+    struct Item: Hashable, TimeRange {
+
+        var range: Range<Date> { Date()..<Date().date(byAdding: .day, value: 1)}
+
+        static func == (lhs: ForYear_Previews.Item, rhs: ForYear_Previews.Item) -> Bool {
+            lhs.hashValue == rhs.hashValue
+        }
+    }
+
     static var previews: some View {
-        ForYear([CalendarItem(id: "id", period: .allday(Date()))], columns: [
+        ForYear([Item()], columns: [
             GridItem(.flexible(), spacing: 24),
             GridItem(.flexible(), spacing: 24),
             GridItem(.flexible(), spacing: 24)
