@@ -33,7 +33,7 @@ public struct ForWeek<Content>: View where Content: View {
                 HStack {
                     if store.calendar.isDateInToday(date) {
                         Circle()
-                            .fill(Color.red)
+                            .fill(Color.accentColor)
                             .frame(width: 32, height: 32)
                             .overlay {
                                 Text("\(date.day)")
@@ -91,6 +91,7 @@ public struct ForWeek<Content>: View where Content: View {
                                 .id(weekOfYear.weekOfYearTag)
                             }
                         }
+                        .compositingGroup()
                     }
                     .onAppear {
                         scrollViewProxy.scrollTo(store.selectedDate.weekOfYearTag)

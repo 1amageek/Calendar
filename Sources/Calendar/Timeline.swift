@@ -25,7 +25,7 @@ struct Timeline<Data, Content>: View where Data: RandomAccessCollection, Data.El
 
     var columnMagnitude: Int
 
-    init(_ data: Data, range: Range<Date>, scrollViewOffset: Binding<CGPoint> = .constant(.zero), columns: Int = 7, scale: CGFloat = 1.5, @ViewBuilder content: @escaping (Data.Element) -> Content) {
+    init(_ data: Data, range: Range<Date>, scrollViewOffset: Binding<CGPoint> = .constant(.zero), columns: Int = 7, scale: CGFloat = 1.8, @ViewBuilder content: @escaping (Data.Element) -> Content) {
         self._scrollViewOffset = scrollViewOffset
         self.data = data
         self.range = range
@@ -124,7 +124,7 @@ public struct TimelineRuler: View {
 
     var scale: CGFloat
 
-    public init(_ range: Range<Int> = 0..<25, scale: CGFloat = 1.5) {
+    public init(_ range: Range<Int> = 0..<25, scale: CGFloat = 1.8) {
         self.range = range
         self.scale = scale
     }
@@ -153,6 +153,7 @@ public struct TimelineRuler: View {
                 }
             }
         }
+        .compositingGroup()
     }
 }
 
@@ -175,6 +176,7 @@ public struct TimelineBackground<Content>: View where Content: View {
                 }
             }
         }
+        .compositingGroup()
     }
 }
 
@@ -220,6 +222,7 @@ struct Timeline_Previews: PreviewProvider {
                             .frame(width: proxy.size.width, height: proxy.size.height)
                     }
                 }
+                .compositingGroup()
             }
         }
     }

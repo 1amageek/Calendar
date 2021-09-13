@@ -104,76 +104,21 @@ public struct Calendar<Content>: View where Content: View {
         }
     }
 
-//    var forYear: some View {
-//        GeometryReader { geometryProxy in
-//            ScrollViewReader { scrollViewProxy in
-//                ScrollView {
-//                    ForYear(store.year, columns: columnsForYear(), spacing: store.spacingForYear) { month in
-//                        ForMonth(month, year: store.year, columns: columnsForMonth(), spacing: store.spacingForMonth, calendar: store.calendar, timeZone: store.timeZone) { _ in
-//                            header
-//                        } content: { weekOfMonth in
-//                            ForWeek(weekOfMonth, month: month, year: store.year) { date in
-//                                ForDay(date.day, month: month, year: store.year) { date in
-//                                    content(date)
-//                                }
-//                                .contentShape(Rectangle())
-//                                .onTapGesture {
-//                                    withAnimation {
-//                                        self.store.selectedDate = date
-//                                    }
-//                                }
-//                                .tag(date)
-//                                .onReceive(store.$selectedDate) { newValue in
-//                                    scrollViewProxy.scrollTo(newValue)
-//                                }
-//                                .onReceive(store.$displayMode) { newValue in
-//                                    scrollViewProxy.scrollTo(newValue)
-//                                }
-//                            }
-//                        }
-//                    }
-//                    .frame(height: geometryProxy.size.height)
-//                    .compositingGroup()
-//                }
-//            }
-//        }
-//    }
-//
-//    var forMonth: some View {
-//        GeometryReader { geometryProxy in
-//            ScrollViewReader { scrollViewProxy in
-//                ScrollView {
-//                    ForYear(store.year, columns: columnsForYear(), spacing: store.spacingForYear) { month in
-//                        ForMonth(month, year: store.year, columns: columnsForMonth(), spacing: store.spacingForMonth, calendar: store.calendar, timeZone: store.timeZone) { _ in
-//                            header
-//                        } content: { weekOfMonth in
-//                            ForWeek(weekOfMonth, month: month, year: store.year) { date in
-//                                ForDay(date.day, month: month, year: store.year) { date in
-//                                    content(date)
-//                                }
-//                                .contentShape(Rectangle())
-//                                .onTapGesture {
-//                                    withAnimation {
-//                                        self.store.selectedDate = date
-//                                    }
-//                                }
-//                                .tag(date)
-//                                .onReceive(store.$selectedDate) { newValue in
-//                                    scrollViewProxy.scrollTo(newValue)
-//                                }
-//                                .onReceive(store.$displayMode) { newValue in
-//                                    scrollViewProxy.scrollTo(newValue)
-//                                }
-//                            }
-//                        }
-//                        .frame(height: geometryProxy.size.height)
-//                    }
-//                    .frame(height: geometryProxy.size.height * 12)
-//                    .compositingGroup()
-//                }
-//            }
-//        }
-//    }
+    var forYear: some View {
+        ForYear(columns: [
+            GridItem(.flexible(), spacing: 24),
+            GridItem(.flexible(), spacing: 24),
+            GridItem(.flexible(), spacing: 24)
+        ]) { date in
+
+        }
+    }
+
+    var forMonth: some View {
+        ForMonth { date in
+            Text("\(date.id)")
+        }
+    }
 
     var forWeek: some View {
         ForWeek { date in
@@ -200,8 +145,8 @@ public struct Calendar<Content>: View where Content: View {
     public var body: some View {
         Group {
             switch store.displayMode {
-//                case .year: forYear
-//                case .month: forMonth
+                case .year: forYear
+                case .month: forMonth
                 case .week: forWeek
                 default: forDay
             }

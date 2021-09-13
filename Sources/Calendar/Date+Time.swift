@@ -29,6 +29,11 @@ extension Date {
 
     public var time: Int { Int(floor(self.timeIntervalSince1970)) }
 
+    public var firstDayOfTheYear: Date {
+        let calendar = Foundation.Calendar(identifier: .gregorian)
+        return calendar.firstDayOfTheYear(date: self)
+    }
+
     public var firstDayOfTheWeek: Date {
         let calendar = Foundation.Calendar(identifier: .gregorian)
         return calendar.firstDayOfTheWeek(date: self)

@@ -24,7 +24,7 @@ public struct ForDay<Content>: View where Content: View {
 
     var dateFormatter: DateFormatter {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYY年m月d日"
+        dateFormatter.dateFormat = "YYYY年M月d日"
         return dateFormatter
     }
 
@@ -38,8 +38,12 @@ public struct ForDay<Content>: View where Content: View {
         HStack {
             VStack(alignment: .leading) {
                 Text(store.selectedDate, formatter: dateFormatter)
+                    .font(.largeTitle)
+                    .bold()
                 Text(store.selectedDate, formatter: weekdayFormatter)
+                    .font(.largeTitle)
             }
+            .padding()
             Spacer()
         }
     }
@@ -63,7 +67,7 @@ public struct ForDay<Content>: View where Content: View {
         let dateRange = DateRange(store.selectedDate, range: (0..<1), component: .day)
         VStack {
             header(dateRange: dateRange)
-                .frame(height: 44)
+//                .frame(height: 44)
             HStack {
                 GeometryReader { proxy in
                     ScrollView(.vertical) {
