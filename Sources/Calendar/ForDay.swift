@@ -7,17 +7,20 @@
 
 import SwiftUI
 
-public struct ForDay<Content>: View where Content: View {
+public struct ForDay<Data, Content>: View where Data: RandomAccessCollection, Data.Element: TimeRange, Data.Element: Hashable, Content: View {
 
     @EnvironmentObject var store: Store
 
     @State var offset: CGPoint = .zero
 
+    var data: Data
+
     var spacing: CGFloat
 
-    var content: (CalendarItem) -> Content
+    var content: (Data.Element) -> Content
 
-    public init(spacing: CGFloat = 4, @ViewBuilder content: @escaping (CalendarItem) -> Content) {
+    public init(_ data: Data, spacing: CGFloat = 4, @ViewBuilder content: @escaping (Data.Element) -> Content) {
+        self.data = data
         self.spacing = spacing
         self.content = content
     }
@@ -51,7 +54,7 @@ public struct ForDay<Content>: View where Content: View {
     @ViewBuilder
     func timeline(dateRange: DateRange) -> some View {
         let range = dateRange.dateRange
-        Timeline(store.items(range), range: range, scrollViewOffset: $offset, columns: 1) { item in
+        Timeline(data, range: range, scrollViewOffset: $offset, columns: 1) { item in
             content(item)
         }.background(
             TimelineBackground(dateRange) { date in
@@ -67,7 +70,6 @@ public struct ForDay<Content>: View where Content: View {
         let dateRange = DateRange(store.selectedDate, range: (0..<1), component: .day)
         VStack {
             header(dateRange: dateRange)
-//                .frame(height: 44)
             HStack {
                 GeometryReader { proxy in
                     ScrollView(.vertical) {
@@ -90,7 +92,7 @@ public struct ForDay<Content>: View where Content: View {
 
 struct ForDay_Previews: PreviewProvider {
     static var previews: some View {
-        ForDay { date in
+        ForDay([CalendarItem(id: "id", period: .allday(Date()))]) { date in
             RoundedRectangle(cornerRadius: 8)
                 .fill(Color.green)
                 .padding(1)
@@ -98,9 +100,6 @@ struct ForDay_Previews: PreviewProvider {
                     Text("\(date.id)")
                 }
         }
-        .environmentObject(
-            Store(displayMode: .week, today: Date())
-                .setItem(CalendarItem(id: "id", period: .allday(Date())))
-        )
+        .environmentObject(Store(displayMode: .week, today: Date()))
     }
 }

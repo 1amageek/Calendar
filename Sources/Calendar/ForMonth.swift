@@ -7,13 +7,16 @@
 
 import SwiftUI
 
-public struct ForMonth<Content>: View where Content: View {
+public struct ForMonth<Data, Content>: View where Data: RandomAccessCollection, Data.Element: TimeRange, Data.Element: Hashable, Content: View {
 
     @EnvironmentObject var store: Store
 
-    var content: (CalendarItem) -> Content
+    var data: Data
 
-    public init(@ViewBuilder content: @escaping (CalendarItem) -> Content) {
+    var content: (Data.Element) -> Content
+
+    public init(_ data: Data, @ViewBuilder content: @escaping (Data.Element) -> Content) {
+        self.data = data
         self.content = content
     }
 
@@ -92,7 +95,7 @@ public struct ForMonth<Content>: View where Content: View {
 
 struct ForMonth_Previews: PreviewProvider {
     static var previews: some View {
-        ForMonth { date in
+        ForMonth([CalendarItem(id: "id", period: .allday(Date()))]) { date in
             Text("\(date.id)")
         }
         .environmentObject(Store(today: Date()))

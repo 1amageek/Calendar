@@ -56,6 +56,7 @@ public struct CalendarItem: Identifiable, Hashable {
         lhs.hashValue == rhs.hashValue
     }
 }
+
 extension CalendarItem: TimeRange {
 
     public var range: Range<Date> {

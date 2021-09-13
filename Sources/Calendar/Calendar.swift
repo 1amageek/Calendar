@@ -31,58 +31,16 @@ public struct CalendarTag: Hashable {
 
 }
 
-public struct Calendar<Content>: View where Content: View {
+public struct Calendar<Data, Content>: View where Data: RandomAccessCollection, Data.Element: TimeRange, Data.Element: Hashable, Content: View {
 
     @EnvironmentObject var store: Store
 
-    var content: (Date) -> Content
+    var data: Data
 
-    func columnsForYear(_ size: CGSize? = nil) -> [GridItem] {
+    var content: (Data.Element) -> Content
 
-        switch store.displayMode {
-            case .year: return [
-                GridItem(.flexible(), spacing: store.spacingForYear),
-                GridItem(.flexible(), spacing: store.spacingForYear),
-                GridItem(.flexible(), spacing: store.spacingForYear)
-            ]
-            case .month: return [
-                GridItem(.flexible(), spacing: store.spacingForYear)
-            ]
-            case .week, .day: return [
-                //                GridItem(.flexible(), spacing: store.spacingForYear),
-                //                GridItem(.flexible(), spacing: store.spacingForYear),
-                //                GridItem(.flexible(), spacing: store.spacingForYear),
-                //                GridItem(.flexible(), spacing: store.spacingForYear),
-                //                GridItem(.flexible(), spacing: store.spacingForYear),
-                //                GridItem(.flexible(), spacing: store.spacingForYear),
-                //                GridItem(.flexible(), spacing: store.spacingForYear),
-                //                GridItem(.flexible(), spacing: store.spacingForYear),
-                //                GridItem(.flexible(), spacing: store.spacingForYear),
-                //                GridItem(.flexible(), spacing: store.spacingForYear),
-                //                GridItem(.flexible(), spacing: store.spacingForYear),
-                GridItem(.flexible(), spacing: store.spacingForYear)
-            ]
-        }
-    }
-
-    func columnsForMonth(_ size: CGSize? = nil) -> [GridItem] {
-        if case .day = store.displayMode {
-            return [
-                GridItem(.flexible(), spacing: store.spacingForMonth)
-            ]
-        }
-        return [
-            GridItem(.flexible(), spacing: store.spacingForMonth),
-            GridItem(.flexible(), spacing: store.spacingForMonth),
-            GridItem(.flexible(), spacing: store.spacingForMonth),
-            GridItem(.flexible(), spacing: store.spacingForMonth),
-            GridItem(.flexible(), spacing: store.spacingForMonth),
-            GridItem(.flexible(), spacing: store.spacingForMonth),
-            GridItem(.flexible(), spacing: store.spacingForMonth)
-        ]
-    }
-
-    public init(@ViewBuilder content: @escaping (Date) -> Content) {
+    public init(_ data: Data, @ViewBuilder content: @escaping (Data.Element) -> Content) {
+        self.data = data
         self.content = content
     }
 
@@ -105,7 +63,7 @@ public struct Calendar<Content>: View where Content: View {
     }
 
     var forYear: some View {
-        ForYear(columns: [
+        ForYear(data, columns: [
             GridItem(.flexible(), spacing: 24),
             GridItem(.flexible(), spacing: 24),
             GridItem(.flexible(), spacing: 24)
@@ -115,30 +73,20 @@ public struct Calendar<Content>: View where Content: View {
     }
 
     var forMonth: some View {
-        ForMonth { date in
-            Text("\(date.id)")
+        ForMonth(data) { date in
+//            content(item)
         }
     }
 
     var forWeek: some View {
-        ForWeek { date in
-            RoundedRectangle(cornerRadius: 8)
-                .fill(Color.green)
-                .padding(1)
-                .overlay {
-                    Text("\(date.id)")
-                }
+        ForWeek(data) { item in
+            content(item)
         }
     }
 
     var forDay: some View {
-        ForDay { date in
-            RoundedRectangle(cornerRadius: 8)
-                .fill(Color.green)
-                .padding(1)
-                .overlay {
-                    Text("\(date.id)")
-                }
+        ForDay(data) { item in
+            content(item)
         }
     }
 
@@ -160,7 +108,6 @@ struct Calendar_Previews: PreviewProvider {
     struct ContentView: View {
 
         @StateObject var store: Store = Store(displayMode: .week, today: Date())
-            .setItem(CalendarItem(id: "id", period: .allday(Date())))
 
         var height: CGFloat? {
             switch store.displayMode {
@@ -182,16 +129,13 @@ struct Calendar_Previews: PreviewProvider {
                     }
                 }
                 .pickerStyle(SegmentedPickerStyle())
-                Calendar { date in
-                    if store.selectedDate == date {
-                        Circle()
-                            .fill(Color.red)
-                            .overlay {
-                                Text("\(date.day)")
-                            }
-                    } else {
-                        Text("\(date.day)")
-                    }
+                Calendar([CalendarItem(id: "id", period: .allday(Date()))]) { date in
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.green)
+                        .padding(1)
+                        .overlay {
+                            Text("\(date.id)")
+                        }
                 }
                 .environmentObject(store)
             }

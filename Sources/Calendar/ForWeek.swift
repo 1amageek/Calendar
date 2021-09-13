@@ -7,19 +7,22 @@
 
 import SwiftUI
 
-public struct ForWeek<Content>: View where Content: View {
+public struct ForWeek<Data, Content>: View where Data: RandomAccessCollection, Data.Element: TimeRange, Data.Element: Hashable, Content: View {
 
     @EnvironmentObject var store: Store
 
     @State var offset: CGPoint = .zero
 
+    var data: Data
+
     var spacing: CGFloat
 
-    var content: (CalendarItem) -> Content
+    var content: (Data.Element) -> Content
 
     var dateFormatter: DateFormatter
 
-    public init(spacing: CGFloat = 4, @ViewBuilder content: @escaping (CalendarItem) -> Content) {
+    public init(_ data: Data, spacing: CGFloat = 4, @ViewBuilder content: @escaping (Data.Element) -> Content) {
+        self.data = data
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "E"
         self.dateFormatter = dateFormatter
@@ -54,7 +57,7 @@ public struct ForWeek<Content>: View where Content: View {
         VStack {
             header(dateRange: dateRange)
                 .frame(height: 44)
-            Timeline(store.items(range), range: range, scrollViewOffset: $offset) { item in
+            Timeline(data, range: range, scrollViewOffset: $offset) { item in
                 content(item)
             }.background(
                 TimelineBackground(dateRange) { date in
@@ -104,7 +107,7 @@ public struct ForWeek<Content>: View where Content: View {
 
 struct ForWeek_Previews: PreviewProvider {
     static var previews: some View {
-        ForWeek() { date in
+        ForWeek([CalendarItem(id: "id", period: .allday(Date()))]) { date in
             RoundedRectangle(cornerRadius: 8)
                 .fill(Color.green)
                 .padding(1)

@@ -7,9 +7,11 @@
 
 import SwiftUI
 
-public struct ForYear<Content>: View where Content: View {
+public struct ForYear<Data, Content>: View where Data: RandomAccessCollection, Data.Element: TimeRange, Data.Element: Hashable, Content: View {
 
     @EnvironmentObject var store: Store
+
+    var data: Data
 
     var columns: [GridItem]
 
@@ -17,7 +19,8 @@ public struct ForYear<Content>: View where Content: View {
 
     var content: (Date) -> Content
 
-    public init(columns: [GridItem], spacing: CGFloat = 32, @ViewBuilder content: @escaping (Date) -> Content) {
+    public init(_ data: Data, columns: [GridItem], spacing: CGFloat = 32, @ViewBuilder content: @escaping (Date) -> Content) {
+        self.data = data
         self.spacing = spacing
         self.columns = columns
         self.content = content
@@ -158,7 +161,7 @@ struct Month<Content>: View where Content: View {
 
 struct ForYear_Previews: PreviewProvider {
     static var previews: some View {
-        ForYear(columns: [
+        ForYear([CalendarItem(id: "id", period: .allday(Date()))], columns: [
             GridItem(.flexible(), spacing: 24),
             GridItem(.flexible(), spacing: 24),
             GridItem(.flexible(), spacing: 24)
