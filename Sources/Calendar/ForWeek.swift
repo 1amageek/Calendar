@@ -8,7 +8,7 @@
 import SwiftUI
 import PageView
 
-public struct ForWeek<Data, Content>: View where Data: RandomAccessCollection, Data.Element: TimeRange, Data.Element: Hashable, Content: View {
+public struct ForWeek<Data, Content>: View where Data: RandomAccessCollection, Data.Element: CalendarItemRepresentable, Content: View {
 
     @EnvironmentObject var store: Store
 
@@ -96,21 +96,10 @@ public struct ForWeek<Data, Content>: View where Data: RandomAccessCollection, D
 
 struct ForWeek_Previews: PreviewProvider {
 
-    struct Item: Hashable, TimeRange {
-
-        var range: Range<Date> = Date()..<Date().date(byAdding: .day, value: 1)
-
-        static func == (lhs: Item, rhs: Item) -> Bool {
-            lhs.hashValue == rhs.hashValue
-        }
-
-        func hash(into hasher: inout Hasher) {
-            hasher.combine(range)
-        }
-    }
-
     static var previews: some View {
-        ForWeek([Item()]) { date in
+        ForWeek([
+            CalendarItem(id: "id", range: Date()..<Date().date(byAdding: .day, value: 1))
+        ]) { date in
             RoundedRectangle(cornerRadius: 8)
                 .fill(Color.green)
                 .padding(1)                

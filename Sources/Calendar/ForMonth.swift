@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public struct ForMonth<Data, Content>: View where Data: RandomAccessCollection, Data.Element: TimeRange, Data.Element: Hashable, Content: View {
+public struct ForMonth<Data, Content>: View where Data: RandomAccessCollection, Data.Element: CalendarItemRepresentable, Content: View {
 
     @EnvironmentObject var store: Store
 
@@ -49,6 +49,12 @@ public struct ForMonth<Data, Content>: View where Data: RandomAccessCollection, 
                     }
                 }
                 .padding()
+            let items = data.filter({ store.calendar.isDate($0.range.lowerBound, inSameDayAs: date) || store.calendar.isDate($0.range.upperBound, inSameDayAs: date) })
+            VStack {
+                ForEach(items, id: \.self) { item in
+                    content(item)
+                }
+            }
             Spacer()
             Divider()
         }
@@ -95,21 +101,10 @@ public struct ForMonth<Data, Content>: View where Data: RandomAccessCollection, 
 
 struct ForMonth_Previews: PreviewProvider {
 
-    struct Item: Hashable, TimeRange {
-
-        var range: Range<Date> { Date()..<Date().date(byAdding: .day, value: 1)}
-
-        static func == (lhs: Item, rhs: Item) -> Bool {
-            lhs.hashValue == rhs.hashValue
-        }
-
-        func hash(into hasher: inout Hasher) {
-            hasher.combine(range)
-        }
-    }
-
     static var previews: some View {
-        ForMonth([Item()]) { date in
+        ForMonth([
+            CalendarItem(id: "id", range: Date()..<Date().date(byAdding: .day, value: 1))
+        ]) { date in
             Rectangle()
         }
         .environmentObject(Store(today: Date()))

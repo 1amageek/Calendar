@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public struct ForYear<Data, Content>: View where Data: RandomAccessCollection, Data.Element: TimeRange, Data.Element: Hashable, Content: View {
+public struct ForYear<Data, Content>: View where Data: RandomAccessCollection, Data.Element: CalendarItemRepresentable, Content: View {
 
     @EnvironmentObject var store: Store
 
@@ -161,17 +161,11 @@ struct Month<Content>: View where Content: View {
 
 struct ForYear_Previews: PreviewProvider {
 
-    struct Item: Hashable, TimeRange {
-
-        var range: Range<Date> { Date()..<Date().date(byAdding: .day, value: 1)}
-
-        static func == (lhs: ForYear_Previews.Item, rhs: ForYear_Previews.Item) -> Bool {
-            lhs.hashValue == rhs.hashValue
-        }
-    }
 
     static var previews: some View {
-        ForYear([Item()], columns: [
+        ForYear([
+            CalendarItem(id: "id", range: Date()..<Date().date(byAdding: .day, value: 1))
+        ], columns: [
             GridItem(.flexible(), spacing: 24),
             GridItem(.flexible(), spacing: 24),
             GridItem(.flexible(), spacing: 24)

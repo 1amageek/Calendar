@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct Timeline<Data, Content>: View where Data: RandomAccessCollection, Data.Element: TimeRange, Data.Element: Hashable, Content: View {
+struct Timeline<Data, Content>: View where Data: RandomAccessCollection, Data.Element: TimeFrameRepresentable, Data.Element: Hashable, Content: View {
 
     @Binding var scrollViewOffset: CGPoint
 
@@ -95,9 +95,7 @@ struct Timeline<Data, Content>: View where Data: RandomAccessCollection, Data.El
                     Rectangle().fill(Color.clear)
                         .onChange(of: proxy.frame(in: .named("timeline.scroll"))) { newValue in
                             let frame = proxy.frame(in: .named("timeline.scroll"))
-//                            DispatchQueue.main.async {
-                                self.scrollViewOffset = frame.origin
-//                            }
+                            self.scrollViewOffset = frame.origin
                         }
                 })
 
@@ -112,10 +110,6 @@ extension Timeline {
         var element: Data.Element
         var ranges: [Range<Date>] = []
     }
-}
-
-public protocol TimeRange {
-    var range: Range<Date> { get }
 }
 
 public struct TimelineRuler: View {
@@ -182,7 +176,7 @@ public struct TimelineBackground<Content>: View where Content: View {
 
 struct Timeline_Previews: PreviewProvider {
 
-    struct Item: TimeRange, Hashable {
+    struct Item: TimeFrameRepresentable, Hashable {
         var id: String
         var range: Range<Date>
     }
@@ -205,7 +199,7 @@ struct Timeline_Previews: PreviewProvider {
                         Timeline([
                             Item(id: "0", range: (Date().date(weekOfYear: 0)..<Date().date(weekOfYear: 2))),
                         ]
-                            , range: Date().date(weekOfYear: weekOfYear)..<Date().date(weekOfYear: weekOfYear + 1), columns: 7) { index in
+                                 , range: Date().date(weekOfYear: weekOfYear)..<Date().date(weekOfYear: weekOfYear + 1), columns: 7) { index in
                             RoundedRectangle(cornerRadius: 8)
                                 .fill(Color.green)
                                 .padding(1)
@@ -213,13 +207,13 @@ struct Timeline_Previews: PreviewProvider {
                                     Text("\(index.id)")
                                 }
                         }
-                            .background(TimelineBackground(DateRange(Date(), range: (0..<7), component: .day)) { date in
-                                HStack {
-                                    Spacer()
-                                    Divider()
-                                }
-                            })
-                            .frame(width: proxy.size.width, height: proxy.size.height)
+                                 .background(TimelineBackground(DateRange(Date(), range: (0..<7), component: .day)) { date in
+                                     HStack {
+                                         Spacer()
+                                         Divider()
+                                     }
+                                 })
+                                 .frame(width: proxy.size.width, height: proxy.size.height)
                     }
                 }
                 .compositingGroup()

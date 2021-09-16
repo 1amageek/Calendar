@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import RecurrenceRule
 
 public enum CalendarDisplayMode: CaseIterable {
     case day
@@ -31,7 +30,7 @@ public struct CalendarTag: Hashable {
 
 }
 
-public struct Calendar<Data, Content>: View where Data: RandomAccessCollection, Data.Element: TimeRange, Data.Element: Hashable, Content: View {
+public struct Calendar<Data, Content>: View where Data: RandomAccessCollection, Data.Element: CalendarItemRepresentable, Content: View {
 
     @EnvironmentObject var store: Store
 
@@ -57,6 +56,7 @@ public struct Calendar<Data, Content>: View where Data: RandomAccessCollection, 
             ForEach(Foundation.Calendar.current.shortWeekdaySymbols, id: \.self) { weekdaySymbol in
                 VStack {
                     Text("\(weekdaySymbol)")
+                        .bold()
                 }
             }
         }
@@ -73,8 +73,8 @@ public struct Calendar<Data, Content>: View where Data: RandomAccessCollection, 
     }
 
     var forMonth: some View {
-        ForMonth(data) { date in
-//            content(item)
+        ForMonth(data) { item in
+            content(item)
         }
     }
 
@@ -105,28 +105,6 @@ public struct Calendar<Data, Content>: View where Data: RandomAccessCollection, 
 
 struct Calendar_Previews: PreviewProvider {
 
-    struct CalendarEvent: Hashable, EventRepeatable {
-
-        var period: Period
-
-        var occurrenceDate: Date = Date()
-
-        var recurrenceRules: [RecurrenceRule] = [RecurrenceRule(frequency: .daily, interval: 2)]
-
-        func hash(into hasher: inout Hasher) {
-            hasher.combine(occurrenceDate)
-            hasher.combine(period)
-        }
-
-        static func == (lhs: Calendar_Previews.CalendarEvent, rhs: Calendar_Previews.CalendarEvent) -> Bool {
-            lhs.hashValue == rhs.hashValue
-        }
-
-        func duplicate(period: Period) -> Calendar_Previews.CalendarEvent {
-            CalendarEvent(period: period)
-        }
-    }
-
     struct ContentView: View {
 
         @StateObject var store: Store = Store(displayMode: .week, today: Date())
@@ -139,7 +117,10 @@ struct Calendar_Previews: PreviewProvider {
                     }
                 }
                 .pickerStyle(SegmentedPickerStyle())
-                Calendar([CalendarEvent(period: .allday(Date()))]) { date in
+                Calendar([
+                    CalendarItem(id: "id",
+                                 range: Date()..<Date().date(byAdding: .day, value: 1)
+                                )]) { date in
                     RoundedRectangle(cornerRadius: 8)
                         .fill(Color.green)
                         .padding(1)                        
