@@ -12,6 +12,8 @@ public final class Store: ObservableObject {
 
     @Published public var displayMode: CalendarDisplayMode
 
+    @Published var displayedDate: Date
+
     @Published public var selectedDate: Date
 
     var today: Date
@@ -25,6 +27,7 @@ public final class Store: ObservableObject {
         self.calendar = calendar
         self.timeZone = timeZone
         self._displayMode = Published(initialValue: displayMode)
+        self._displayedDate = Published(initialValue: today.firstDayOfTheWeek)
         self._selectedDate = Published(initialValue: today)
     }
 }

@@ -2,6 +2,15 @@
   "object": {
     "pins": [
       {
+        "package": "PageView",
+        "repositoryURL": "git@github.com:1amageek/PageView.git",
+        "state": {
+          "branch": "main",
+          "revision": "50b3f200581d9a4548ed3db8364a1ffe7ae4ff0c",
+          "version": null
+        }
+      },
+      {
         "package": "RecurrenceRule",
         "repositoryURL": "git@github.com:1amageek/RecurrenceRule.git",
         "state": {

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import PageView
 
 public struct ForWeek<Data, Content>: View where Data: RandomAccessCollection, Data.Element: TimeRange, Data.Element: Hashable, Content: View {
 
@@ -83,22 +84,10 @@ public struct ForWeek<Data, Content>: View where Data: RandomAccessCollection, D
             .frame(width: 100)
             .padding(.top, 44)
 
-            GeometryReader { proxy in
-                ScrollViewReader { scrollViewProxy in
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        LazyHGrid(rows: [GridItem(.fixed(proxy.size.height))]) {
-                            ForEach(DateRange(store.selectedDate, range: -100..<100, component: .weekOfYear)) { weekOfYear in
-                                let dateRange = DateRange(weekOfYear, range: (0..<7), component: .day)
-                                timeline(dateRange: dateRange)
-                                .frame(width: proxy.size.width, height: proxy.size.height)
-                                .id(weekOfYear.weekOfYearTag)
-                            }
-                        }
-                        .compositingGroup()
-                    }
-                    .onAppear {
-                        scrollViewProxy.scrollTo(store.selectedDate.weekOfYearTag)
-                    }
+            PageView($store.displayedDate) {
+                ForEach(DateRange(store.selectedDate, range: -100..<100, component: .weekOfYear)) { weekOfYear in
+                    let dateRange = DateRange(weekOfYear, range: (0..<7), component: .day)
+                    timeline(dateRange: dateRange)
                 }
             }
         }
@@ -109,7 +98,7 @@ struct ForWeek_Previews: PreviewProvider {
 
     struct Item: Hashable, TimeRange {
 
-        var range: Range<Date> { Date()..<Date().date(byAdding: .day, value: 1)}
+        var range: Range<Date> = Date()..<Date().date(byAdding: .day, value: 1)
 
         static func == (lhs: Item, rhs: Item) -> Bool {
             lhs.hashValue == rhs.hashValue

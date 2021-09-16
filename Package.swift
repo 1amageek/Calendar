@@ -13,13 +13,14 @@ let package = Package(
     ],
     dependencies: [
         .package(name: "RecurrenceRule", url: "git@github.com:1amageek/RecurrenceRule.git", .branch("main")),
+        .package(name: "PageView", url: "git@github.com:1amageek/PageView.git", .branch("main")),
     ],
     targets: [
         .target(
             name: "Calendar",
-            dependencies: ["RecurrenceRule"]),
+            dependencies: ["RecurrenceRule", "PageView"]),
         .testTarget(
             name: "CalendarTests",
-            dependencies: ["Calendar", "RecurrenceRule"]),
+            dependencies: ["Calendar"]),
     ]
 )
