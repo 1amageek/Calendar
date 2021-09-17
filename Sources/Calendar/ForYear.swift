@@ -164,7 +164,7 @@ struct ForYear_Previews: PreviewProvider {
 
     static var previews: some View {
         ForYear([
-            CalendarItem(id: "id", range: Date()..<Date().date(byAdding: .day, value: 1))
+            CalendarItem(id: "id", period: Date()..<Date().date(byAdding: .day, value: 1))
         ], columns: [
             GridItem(.flexible(), spacing: 24),
             GridItem(.flexible(), spacing: 24),

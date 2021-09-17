@@ -8,5 +8,5 @@
 import Foundation
 
 public protocol TimeFrameRepresentable {
-    var range: Range<Date> { get }
+    var period: Range<Date> { get }
 }

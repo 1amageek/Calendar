@@ -14,5 +14,5 @@ public protocol CalendarItemRepresentable: Identifiable, Hashable, TimeFrameRepr
 
     var isAllDay: Bool { get set }
 
-    var range: Range<Date> { get set }
+    var period: Range<Date> { get set }
 }

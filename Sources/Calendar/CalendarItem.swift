@@ -16,7 +16,7 @@ public struct CalendarItem: CalendarItemRepresentable {
 
     public var isAllDay: Bool
 
-    public var range: Range<Date>
+    public var period: Range<Date>
 
     public var location: String?
 
@@ -28,7 +28,7 @@ public struct CalendarItem: CalendarItemRepresentable {
         id: String,
         title: String = "NO TITLE",
         isAllDay: Bool = false,
-        range: Range<Date>,
+        period: Range<Date>,
         location: String? = nil,
         url: URL? = nil,
         timeZone: TimeZone = TimeZone.current
@@ -36,7 +36,7 @@ public struct CalendarItem: CalendarItemRepresentable {
         self.id = id
         self.title = title
         self.isAllDay = isAllDay
-        self.range = range
+        self.period = period
         self.location = location
         self.url = url
         self.timeZone = timeZone
@@ -53,6 +53,6 @@ extension CalendarItem: Hashable {
         hasher.combine(timeZone)
         hasher.combine(url)
         hasher.combine(isAllDay)
-        hasher.combine(range)
+        hasher.combine(period)
     }
 }

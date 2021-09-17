@@ -119,7 +119,7 @@ struct Calendar_Previews: PreviewProvider {
                 .pickerStyle(SegmentedPickerStyle())
                 Calendar([
                     CalendarItem(id: "id",
-                                 range: Date()..<Date().date(byAdding: .day, value: 1)
+                                 period: Date()..<Date().date(byAdding: .day, value: 1)
                                 )]) { date in
                     RoundedRectangle(cornerRadius: 8)
                         .fill(Color.green)

@@ -49,7 +49,7 @@ public struct ForMonth<Data, Content>: View where Data: RandomAccessCollection, 
                     }
                 }
                 .padding()
-            let items = data.filter({ store.calendar.isDate($0.range.lowerBound, inSameDayAs: date) || store.calendar.isDate($0.range.upperBound, inSameDayAs: date) })
+            let items = data.filter({ store.calendar.isDate($0.period.lowerBound, inSameDayAs: date) || store.calendar.isDate($0.period.upperBound, inSameDayAs: date) })
             VStack {
                 ForEach(items, id: \.self) { item in
                     content(item)
@@ -103,9 +103,10 @@ struct ForMonth_Previews: PreviewProvider {
 
     static var previews: some View {
         ForMonth([
-            CalendarItem(id: "id", range: Date()..<Date().date(byAdding: .day, value: 1))
+            CalendarItem(id: "id", period: Date()..<Date().date(byAdding: .day, value: 1))
         ]) { date in
             Rectangle()
+                .padding(4)
         }
         .environmentObject(Store(today: Date()))
         .previewInterfaceOrientation(.landscapeLeft)

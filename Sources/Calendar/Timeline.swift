@@ -42,18 +42,18 @@ struct Timeline<Data, Content>: View where Data: RandomAccessCollection, Data.El
         self.data.forEach { dataItem in
             var item: Item = Item(element: dataItem)
             separations.forEach { number in
-                if dataItem.range.contains(number) {
+                if dataItem.period.contains(number) {
                     if let last = item.ranges.last {
                         item.ranges.append((last.upperBound..<number))
-                    } else if dataItem.range.lowerBound < number {
-                        item.ranges.append((dataItem.range.lowerBound..<number))
+                    } else if dataItem.period.lowerBound < number {
+                        item.ranges.append((dataItem.period.lowerBound..<number))
                     }
-                } else if let last = item.ranges.last, last.upperBound < dataItem.range.upperBound {
-                    item.ranges.append((last.upperBound..<dataItem.range.upperBound))
+                } else if let last = item.ranges.last, last.upperBound < dataItem.period.upperBound {
+                    item.ranges.append((last.upperBound..<dataItem.period.upperBound))
                 }
             }
             if item.ranges.isEmpty {
-                item.ranges.append(dataItem.range)
+                item.ranges.append(dataItem.period)
             }
             items.append(item)
         }
@@ -178,7 +178,7 @@ struct Timeline_Previews: PreviewProvider {
 
     struct Item: TimeFrameRepresentable, Hashable {
         var id: String
-        var range: Range<Date>
+        var period: Range<Date>
     }
 
     static var range: Range<Int> {
@@ -197,7 +197,7 @@ struct Timeline_Previews: PreviewProvider {
                 LazyHGrid(rows: [GridItem(.fixed(proxy.size.height))]) {
                     ForEach(range) { weekOfYear in
                         Timeline([
-                            Item(id: "0", range: (Date().date(weekOfYear: 0)..<Date().date(weekOfYear: 2))),
+                            Item(id: "0", period: (Date().date(weekOfYear: 0)..<Date().date(weekOfYear: 2))),
                         ]
                                  , range: Date().date(weekOfYear: weekOfYear)..<Date().date(weekOfYear: weekOfYear + 1), columns: 7) { index in
                             RoundedRectangle(cornerRadius: 8)
