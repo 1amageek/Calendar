@@ -10,9 +10,5 @@ import Foundation
 
 public protocol CalendarItemRepresentable: Identifiable, Hashable, TimeFrameRepresentable {
 
-    var id: String{ get set }
-
     var isAllDay: Bool { get set }
-
-    var period: Range<Date> { get set }
 }
