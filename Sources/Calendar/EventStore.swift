@@ -9,7 +9,7 @@ import Foundation
 
 public final class EventStore {
 
-    public func calendarItems<Event>(_ events: [Event], range: Range<Date>) -> [CalendarItem] where Event: EventRepresentable, Event.ID == String {
+    public static func calendarItems<Event>(_ events: [Event], range: Range<Date>) -> [CalendarItem] where Event: EventRepresentable, Event.ID == String {
         if events.isEmpty { return [] }
         return events.reduce(Array<CalendarItem>()) { prev, event in
             let calendarItems = calendarItems(event, range: range)
@@ -17,7 +17,7 @@ public final class EventStore {
         }
     }
 
-    public func calendarItems<Event>(_ event: Event, range: Range<Date>) -> [CalendarItem] where Event: EventRepresentable, Event.ID == String {
+    public static func calendarItems<Event>(_ event: Event, range: Range<Date>) -> [CalendarItem] where Event: EventRepresentable, Event.ID == String {
 
         let calendar = Foundation.Calendar(identifier: .gregorian)
         var calendarItems: [CalendarItem] = []
