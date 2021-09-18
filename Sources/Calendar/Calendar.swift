@@ -121,7 +121,13 @@ struct Calendar_Previews: PreviewProvider {
 
         var occurrenceDate: Date
 
-        var recurrenceRules: [RecurrenceRule] = [RecurrenceRule(frequency: .daily, interval: 1)]
+        var recurrenceRules: [RecurrenceRule] = [
+            RecurrenceRule(frequency: .weekly, interval: 1, daysOfTheWeek: [
+                .init(dayOfTheWeek: .monday, weekNumber: 0),
+                .init(dayOfTheWeek: .wednesday, weekNumber: 0),
+                .init(dayOfTheWeek: .friday, weekNumber: 0)
+            ])
+        ]
 
         var title: String = ""
 
@@ -157,7 +163,7 @@ struct Calendar_Previews: PreviewProvider {
                 }
                 .pickerStyle(SegmentedPickerStyle())
                 Slider(value: $value)
-                Calendar(EventStore.calendarItems(event, range: store.displayedRange)) { date in
+                Calendar(RecurrenceScheduler.calendarItems(event, range: store.displayedRange)) { date in
                     RoundedRectangle(cornerRadius: 8)
                         .fill(Color.green)
                         .padding(1)                        

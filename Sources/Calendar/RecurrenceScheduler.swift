@@ -1,13 +1,13 @@
 //
-//  EventStore.swift
-//  EventStore
+//  RecurrenceScheduler.swift
+//  
 //
-//  Created by nori on 2021/09/17.
+//  Created by nori on 2021/09/18.
 //
 
 import Foundation
 
-public final class EventStore {
+public final class RecurrenceScheduler {
 
     public static func calendarItems<Event>(_ events: [Event], range: Range<Date>) -> [CalendarItem] where Event: EventRepresentable, Event.ID == String {
         if events.isEmpty { return [] }
@@ -39,12 +39,6 @@ public final class EventStore {
 
             let lowerBound = event.period.lowerBound
             let upperBound = event.period.upperBound
-            let date = event.occurrenceDate
-            let components = calendar.dateComponents([.calendar, .timeZone, .year, .month, .day], from: date)
-            let startDate = calendar.setTime(components: components, date: lowerBound)
-            let endDate = calendar.setTime(components: components, date: upperBound)
-            let calendarItem: CalendarItem = CalendarItem(id: event.id, title: event.title, isAllDay: event.isAllDay, period: startDate..<endDate, timeZone: event.timeZone)
-            calendarItems.append(calendarItem)
 
             switch rule.frequency {
                 case .daily:
@@ -80,10 +74,8 @@ public final class EventStore {
                                 let startDate = calendar.setTime(components: components, date: lowerBound)
                                 let endDate = calendar.setTime(components: components, date: upperBound)
                                 let calendarItem: CalendarItem = CalendarItem(id: event.id, title: event.title, isAllDay: event.isAllDay, period: startDate..<endDate, timeZone: event.timeZone)
-                                if event.occurrenceDate < calendarItem.period.lowerBound {
-                                    calendarItems.append(calendarItem)
-                                    count += 1
-                                }
+                                calendarItems.append(calendarItem)
+                                count += 1
                             }
                         } else {
                             let interval: Int = rule.interval * count * 7
@@ -114,10 +106,8 @@ public final class EventStore {
                                 let startDate = calendar.setTime(components: components, date: lowerBound)
                                 let endDate = calendar.setTime(components: components, date: upperBound)
                                 let calendarItem: CalendarItem = CalendarItem(id: event.id, title: event.title, isAllDay: event.isAllDay, period: startDate..<endDate, timeZone: event.timeZone)
-                                if event.occurrenceDate < calendarItem.period.lowerBound {
-                                    calendarItems.append(calendarItem)
-                                    count += 1
-                                }
+                                calendarItems.append(calendarItem)
+                                count += 1
                             }
                         } else {
                             date = calendar.date(byAdding: .month, value: interval, to: event.occurrenceDate)
@@ -147,10 +137,8 @@ public final class EventStore {
                                 let startDate = calendar.setTime(components: components, date: lowerBound)
                                 let endDate = calendar.setTime(components: components, date: upperBound)
                                 let calendarItem: CalendarItem = CalendarItem(id: event.id, title: event.title, isAllDay: event.isAllDay, period: startDate..<endDate, timeZone: event.timeZone)
-                                if event.occurrenceDate < calendarItem.period.lowerBound {
-                                    calendarItems.append(calendarItem)
-                                    count += 1
-                                }
+                                calendarItems.append(calendarItem)
+                                count += 1
                             }
                         } else {
                             date = calendar.date(byAdding: .year, value: interval, to: event.occurrenceDate)
@@ -167,18 +155,5 @@ public final class EventStore {
         }
 
         return calendarItems
-    }
-}
-
-extension Foundation.Calendar {
-    func setTime(components: DateComponents, date: Date) -> Date {
-        var components = components
-        let hour = self.component(.hour, from: date)
-        let minute = self.component(.minute, from: date)
-        let second = self.component(.second, from: date)
-        components.hour = hour
-        components.minute = minute
-        components.second = second
-        return self.date(from: components)!
     }
 }
