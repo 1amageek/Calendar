@@ -10,7 +10,7 @@ import RecurrenceRule
 
 public protocol EventRepresentable: CalendarItemRepresentable {
 
-    var occurrenceDate: Date { get set }
+    var occurrenceDate: Date { get }
 
-    var recurrenceRules: [RecurrenceRule] { get set }
+    var recurrenceRules: [RecurrenceRule] { get }
 }
