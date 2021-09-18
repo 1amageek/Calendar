@@ -141,7 +141,7 @@ struct Calendar_Previews: PreviewProvider {
             var dateComopnents = store.calendar.dateComponents(in: TimeZone.current, from: Date())
             dateComopnents.hour = hour
             let startDate = store.calendar.date(from: dateComopnents)!
-            let period = startDate..<Date().date(byAdding: .day, value: 2)
+            let period = startDate..<Date().date(byAdding: .hour, value: 4)
             return Event(id: "id", occurrenceDate: Date(), period: period)
         }
 

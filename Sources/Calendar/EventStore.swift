@@ -37,7 +37,13 @@ public final class EventStore {
                 return date < range.upperBound
             }
 
-            let calendarItem: CalendarItem = CalendarItem(id: event.id, title: event.title, isAllDay: event.isAllDay, period: event.period, timeZone: event.timeZone)
+            let lowerBound = event.period.lowerBound
+            let upperBound = event.period.upperBound
+            let date = event.occurrenceDate
+            let components = calendar.dateComponents([.calendar, .timeZone, .year, .month, .day], from: date)
+            let startDate = calendar.setTime(components: components, date: lowerBound)
+            let endDate = calendar.setTime(components: components, date: upperBound)
+            let calendarItem: CalendarItem = CalendarItem(id: event.id, title: event.title, isAllDay: event.isAllDay, period: startDate..<endDate, timeZone: event.timeZone)
             calendarItems.append(calendarItem)
 
             switch rule.frequency {
@@ -50,8 +56,8 @@ public final class EventStore {
                         let interval: Int = rule.interval * count
                         date = calendar.date(byAdding: .day, value: interval, to: event.occurrenceDate)
                         let components = calendar.dateComponents([.calendar, .timeZone, .year, .month, .day], from: date)
-                        let startDate = calendar.setTime(components: components, date: event.period.lowerBound)
-                        let endDate = calendar.setTime(components: components, date: event.period.upperBound)
+                        let startDate = calendar.setTime(components: components, date: lowerBound)
+                        let endDate = calendar.setTime(components: components, date: upperBound)
                         let calendarItem: CalendarItem = CalendarItem(id: event.id, title: event.title, isAllDay: event.isAllDay, period: startDate..<endDate, timeZone: event.timeZone)
                         calendarItems.append(calendarItem)
                         count += 1
@@ -67,8 +73,8 @@ public final class EventStore {
                         let interval: Int = rule.interval * 7 * count
                         date = calendar.date(byAdding: .day, value: interval, to: event.occurrenceDate)
                         let components = calendar.dateComponents([.calendar, .timeZone, .year, .month, .day], from: date)
-                        let startDate = calendar.setTime(components: components, date: event.period.lowerBound)
-                        let endDate = calendar.setTime(components: components, date: event.period.upperBound)
+                        let startDate = calendar.setTime(components: components, date: lowerBound)
+                        let endDate = calendar.setTime(components: components, date: upperBound)
                         let calendarItem: CalendarItem = CalendarItem(id: event.id, title: event.title, isAllDay: event.isAllDay, period: startDate..<endDate, timeZone: event.timeZone)
                         calendarItems.append(calendarItem)
                         count += 1
@@ -83,8 +89,8 @@ public final class EventStore {
                         let interval: Int = rule.interval * count
                         date = calendar.date(byAdding: .month, value: interval, to: event.occurrenceDate)
                         let components = calendar.dateComponents([.calendar, .timeZone, .year, .month, .day], from: date)
-                        let startDate = calendar.setTime(components: components, date: event.period.lowerBound)
-                        let endDate = calendar.setTime(components: components, date: event.period.upperBound)
+                        let startDate = calendar.setTime(components: components, date: lowerBound)
+                        let endDate = calendar.setTime(components: components, date: upperBound)
                         let calendarItem: CalendarItem = CalendarItem(id: event.id, title: event.title, isAllDay: event.isAllDay, period: startDate..<endDate, timeZone: event.timeZone)
                         calendarItems.append(calendarItem)
                         count += 1
@@ -99,8 +105,8 @@ public final class EventStore {
                         let interval: Int = rule.interval * count
                         date = calendar.date(byAdding: .year, value: interval, to: event.occurrenceDate)
                         let components = calendar.dateComponents([.calendar, .timeZone, .year, .month, .day], from: date)
-                        let startDate = calendar.setTime(components: components, date: event.period.lowerBound)
-                        let endDate = calendar.setTime(components: components, date: event.period.upperBound)
+                        let startDate = calendar.setTime(components: components, date: lowerBound)
+                        let endDate = calendar.setTime(components: components, date: upperBound)
                         let calendarItem: CalendarItem = CalendarItem(id: event.id, title: "", isAllDay: event.isAllDay, period: startDate..<endDate, timeZone: event.timeZone)
                         calendarItems.append(calendarItem)
                         count += 1
