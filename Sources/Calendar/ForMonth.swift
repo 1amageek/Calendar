@@ -88,7 +88,7 @@ public struct ForMonth<Data, Content>: View where Data: RandomAccessCollection, 
                         }
                         .compositingGroup()
                         .onAppear {
-                            scrollViewProxy.scrollTo(store.selectedDate.firstDayOfTheMonth.dayTag)
+                            scrollViewProxy.scrollTo(store.displayedDate.dayTag)
                         }
                     }
                 }

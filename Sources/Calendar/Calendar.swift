@@ -140,7 +140,7 @@ struct Calendar_Previews: PreviewProvider {
 
     struct ContentView: View {
 
-        @StateObject var store: Store = Store(displayMode: .week, today: Date())
+        @StateObject var store: Store = Store(displayMode: .month, today: Date())
 
         var event: Event {
             let hour = Int(24 * value)
