@@ -37,7 +37,7 @@ public final class EventStore {
                 return date < range.upperBound
             }
 
-            let calendarItem: CalendarItem = CalendarItem(id: event.id, title: "", isAllDay: event.isAllDay, period: event.period, timeZone: event.timeZone)
+            let calendarItem: CalendarItem = CalendarItem(id: event.id, title: event.title, isAllDay: event.isAllDay, period: event.period, timeZone: event.timeZone)
             calendarItems.append(calendarItem)
 
             switch rule.frequency {
@@ -52,7 +52,7 @@ public final class EventStore {
                         let components = calendar.dateComponents([.calendar, .timeZone, .year, .month, .day], from: date)
                         let startDate = calendar.setTime(components: components, date: event.period.lowerBound)
                         let endDate = calendar.setTime(components: components, date: event.period.upperBound)
-                        let calendarItem: CalendarItem = CalendarItem(id: event.id, title: "", isAllDay: event.isAllDay, period: startDate..<endDate, timeZone: event.timeZone)
+                        let calendarItem: CalendarItem = CalendarItem(id: event.id, title: event.title, isAllDay: event.isAllDay, period: startDate..<endDate, timeZone: event.timeZone)
                         calendarItems.append(calendarItem)
                         count += 1
                     } while (shouldRepeat(date: date, count: count))
@@ -69,7 +69,7 @@ public final class EventStore {
                         let components = calendar.dateComponents([.calendar, .timeZone, .year, .month, .day], from: date)
                         let startDate = calendar.setTime(components: components, date: event.period.lowerBound)
                         let endDate = calendar.setTime(components: components, date: event.period.upperBound)
-                        let calendarItem: CalendarItem = CalendarItem(id: event.id, title: "", isAllDay: event.isAllDay, period: startDate..<endDate, timeZone: event.timeZone)
+                        let calendarItem: CalendarItem = CalendarItem(id: event.id, title: event.title, isAllDay: event.isAllDay, period: startDate..<endDate, timeZone: event.timeZone)
                         calendarItems.append(calendarItem)
                         count += 1
                     } while (shouldRepeat(date: date, count: count))
@@ -85,7 +85,7 @@ public final class EventStore {
                         let components = calendar.dateComponents([.calendar, .timeZone, .year, .month, .day], from: date)
                         let startDate = calendar.setTime(components: components, date: event.period.lowerBound)
                         let endDate = calendar.setTime(components: components, date: event.period.upperBound)
-                        let calendarItem: CalendarItem = CalendarItem(id: event.id, title: "", isAllDay: event.isAllDay, period: startDate..<endDate, timeZone: event.timeZone)
+                        let calendarItem: CalendarItem = CalendarItem(id: event.id, title: event.title, isAllDay: event.isAllDay, period: startDate..<endDate, timeZone: event.timeZone)
                         calendarItems.append(calendarItem)
                         count += 1
                     } while (shouldRepeat(date: date, count: count))

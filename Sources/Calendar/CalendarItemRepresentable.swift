@@ -10,7 +10,7 @@ import Foundation
 
 public protocol CalendarItemRepresentable: Identifiable, Hashable, TimeFrameRepresentable {
 
-    var title: String { get set }
+    var title: String { get }
 
-    var isAllDay: Bool { get set }
+    var isAllDay: Bool { get }
 }
