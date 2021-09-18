@@ -11,7 +11,7 @@ import SwiftUI
 struct DemoCalendarApp: App {
     var body: some Scene {
         WindowGroup {
-            InfinityScrollView()
+            ContentView()
         }
     }
 }

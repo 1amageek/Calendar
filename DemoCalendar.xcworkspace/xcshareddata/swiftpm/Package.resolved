@@ -2,20 +2,20 @@
   "object": {
     "pins": [
       {
-        "package": "PickerGroup",
-        "repositoryURL": "git@github.com:1amageek/PickerGroup.git",
+        "package": "PageView",
+        "repositoryURL": "git@github.com:1amageek/PageView.git",
         "state": {
           "branch": "main",
-          "revision": "4f29f8dd6b45a00686a7127dc5c3818840564999",
+          "revision": "932c944abb37163846042e063c29489a842d812b",
           "version": null
         }
       },
       {
-        "package": "RecurrenceRulePicker",
-        "repositoryURL": "git@github.com:1amageek/RecurrenceRulePicker.git",
+        "package": "RecurrenceRule",
+        "repositoryURL": "git@github.com:1amageek/RecurrenceRule.git",
         "state": {
           "branch": "main",
-          "revision": "7d85f5a48c2d1d1fb314f26594a3cf9a94e5278e",
+          "revision": "05e41f83674a65e4c4161847d10c9d91bb28fdf3",
           "version": null
         }
       }

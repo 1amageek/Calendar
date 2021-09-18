@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct Timeline<Data, Content>: View where Data: RandomAccessCollection, Data.Element: TimeFrameRepresentable, Data.Element: Hashable, Content: View {
+public struct Timeline<Data, Content>: View where Data: RandomAccessCollection, Data.Element: TimeFrameRepresentable, Content: View {
 
     @Binding var scrollViewOffset: CGPoint
 
@@ -25,7 +25,7 @@ struct Timeline<Data, Content>: View where Data: RandomAccessCollection, Data.El
 
     var columnMagnitude: Int
 
-    init(_ data: Data, range: Range<Date>, scrollViewOffset: Binding<CGPoint> = .constant(.zero), columns: Int = 7, scale: CGFloat = 1.8, @ViewBuilder content: @escaping (Data.Element) -> Content) {
+    public init(_ data: Data, range: Range<Date>, scrollViewOffset: Binding<CGPoint> = .constant(.zero), columns: Int = 7, scale: CGFloat = 1.8, @ViewBuilder content: @escaping (Data.Element) -> Content) {
         self._scrollViewOffset = scrollViewOffset
         self.data = data
         self.range = range
@@ -76,7 +76,7 @@ struct Timeline<Data, Content>: View where Data: RandomAccessCollection, Data.El
                        y: frame.origin.y + frame.height / 2)
     }
 
-    var body: some View {
+    public var body: some View {
         GeometryReader { proxy in
             ScrollView(.vertical, showsIndicators: false) {
                 ZStack {

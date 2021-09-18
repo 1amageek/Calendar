@@ -41,18 +41,24 @@ public struct CalendarItem: CalendarItemRepresentable {
         self.url = url
         self.timeZone = timeZone
     }
-
 }
 
-extension CalendarItem: Hashable {
-
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-        hasher.combine(title)
-        hasher.combine(location)
-        hasher.combine(timeZone)
-        hasher.combine(url)
-        hasher.combine(isAllDay)
-        hasher.combine(period)
-    }
-}
+//extension CalendarItem {
+//
+//    public static func == (lhs: CalendarItem, rhs: CalendarItem) -> Bool {
+//        lhs.period == rhs.period
+//    }
+//}
+//
+//extension CalendarItem {
+//
+//    public func hash(into hasher: inout Hasher) {
+//        hasher.combine(id)
+//        hasher.combine(title)
+//        hasher.combine(location)
+//        hasher.combine(timeZone)
+//        hasher.combine(url)
+//        hasher.combine(isAllDay)
+//        hasher.combine(period)
+//    }
+//}

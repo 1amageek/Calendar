@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import RecurrenceRule
 
 public enum CalendarDisplayMode: CaseIterable {
     case day
@@ -105,11 +106,49 @@ public struct Calendar<Data, Content>: View where Data: RandomAccessCollection, 
 
 struct Calendar_Previews: PreviewProvider {
 
+    struct Event: EventRepresentable {
+
+        static func == (lhs: Calendar_Previews.Event, rhs: Calendar_Previews.Event) -> Bool {
+            lhs.hashValue == rhs.hashValue
+        }
+
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(title)
+            hasher.combine(period)
+        }
+
+        var id: String
+
+        var occurrenceDate: Date
+
+        var recurrenceRules: [RecurrenceRule] = [RecurrenceRule(frequency: .daily, interval: 1)]
+
+        var title: String = ""
+
+        var isAllDay: Bool = false
+
+        var period: Range<Date> = Date()..<Date().date(byAdding: .day, value: 1)
+
+        var timeZone: TimeZone = TimeZone.current
+    }
+
     struct ContentView: View {
 
         @StateObject var store: Store = Store(displayMode: .week, today: Date())
 
+        var event: Event {
+            let hour = Int(24 * value)
+            var dateComopnents = store.calendar.dateComponents(in: TimeZone.current, from: Date())
+            dateComopnents.hour = hour
+            let startDate = store.calendar.date(from: dateComopnents)!
+            let period = startDate..<Date().date(byAdding: .day, value: 2)
+            return Event(id: "id", occurrenceDate: Date(), period: period)
+        }
+
+        @State var value: Float = 0
+
         var body: some View {
+            let _ = print(Self._printChanges())
             VStack {
                 Picker("DisplayMode", selection: $store.displayMode.animation()) {
                     ForEach(CalendarDisplayMode.allCases, id: \.self) { displaymode in
@@ -117,10 +156,8 @@ struct Calendar_Previews: PreviewProvider {
                     }
                 }
                 .pickerStyle(SegmentedPickerStyle())
-                Calendar([
-                    CalendarItem(id: "id",
-                                 period: Date()..<Date().date(byAdding: .day, value: 1)
-                                )]) { date in
+                Slider(value: $value)
+                Calendar(EventStore.calendarItems(event, range: store.displayedRange)) { date in
                     RoundedRectangle(cornerRadius: 8)
                         .fill(Color.green)
                         .padding(1)                        

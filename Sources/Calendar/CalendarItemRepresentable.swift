@@ -8,7 +8,7 @@
 import Foundation
 
 
-public protocol CalendarItemRepresentable: Identifiable, Hashable, TimeFrameRepresentable {
+public protocol CalendarItemRepresentable: Identifiable, TimeFrameRepresentable {
 
     var title: String { get }
 
