@@ -10,7 +10,12 @@ import CoreGraphics
 
 public final class Store: ObservableObject {
 
-    @Published public var displayMode: CalendarDisplayMode
+    @Published public var displayMode: CalendarDisplayMode {
+        didSet {
+            self.displayedDate = Self.displayedDate(self.selectedDate, displayMode: displayMode)
+            print("ww", displayedDate)
+        }
+    }
 
     @Published var displayedDate: Date
 

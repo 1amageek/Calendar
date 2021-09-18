@@ -41,7 +41,8 @@ public struct ForWeek<Data, Content>: View where Data: RandomAccessCollection, D
     }
 
     func header(dateRange: DateRange) -> some View {
-        LazyVGrid(columns: dateRange.map { _ in GridItem(.flexible(), spacing: 0) }) {
+//        let _ = print(dateRange.lowerBound, dayFormatter.string(from: dateRange.lowerBound))
+        return LazyVGrid(columns: dateRange.map { _ in GridItem(.flexible(), spacing: 0) }) {
             ForEach(dateRange) { date in
                 HStack {
                     if store.calendar.isDateInToday(date) {
@@ -82,7 +83,6 @@ public struct ForWeek<Data, Content>: View where Data: RandomAccessCollection, D
 
     public var body: some View {
         HStack {
-
             GeometryReader { proxy in
                 ScrollView(.vertical) {
                     TimelineRuler()
@@ -95,6 +95,7 @@ public struct ForWeek<Data, Content>: View where Data: RandomAccessCollection, D
 
             PageView($store.displayedDate) {
                 ForEach(DateRange(store.selectedDate, range: -100..<100, component: .weekOfYear)) { weekOfYear in
+                    let _ = print(weekOfYear, dayFormatter.string(from: weekOfYear), store.displayedDate, weekOfYear == store.displayedDate)
                     let dateRange = DateRange(weekOfYear, range: (0..<7), component: .day)
                     timeline(dateRange: dateRange)
                 }
@@ -114,5 +115,6 @@ struct ForWeek_Previews: PreviewProvider {
                 .padding(1)                
         }
         .environmentObject(Store(today: Date()))
+        .environment(\.timeZone, TimeZone.current)
     }
 }

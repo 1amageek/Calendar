@@ -154,7 +154,6 @@ struct Calendar_Previews: PreviewProvider {
         @State var value: Float = 0
 
         var body: some View {
-            let _ = print(Self._printChanges())
             VStack {
                 Picker("DisplayMode", selection: $store.displayMode.animation()) {
                     ForEach(CalendarDisplayMode.allCases, id: \.self) { displaymode in

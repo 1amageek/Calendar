@@ -20,7 +20,7 @@ extension Foundation.Calendar {
     }
 
     public func firstDayOfTheWeek(date: Date) -> Date {
-        let dateComponents = self.dateComponents([.yearForWeekOfYear, .weekOfYear], from: date)
+        let dateComponents = self.dateComponents([.calendar, .timeZone, .yearForWeekOfYear, .weekOfYear], from: date)
         return self.date(from: dateComponents)!
     }
 

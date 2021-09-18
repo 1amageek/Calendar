@@ -37,7 +37,7 @@ struct Event: EventRepresentable {
 
 struct ContentView: View {
 
-    @StateObject var store: Store = Store(displayMode: .week, today: Date())
+    @StateObject var store: Store = Store(displayMode: .month, today: Date())
 
     var event: Event {
         let hour = Int(24 * value)
@@ -62,7 +62,6 @@ struct ContentView: View {
     @State var value: Float = 0
 
     var body: some View {
-        let _ = print(Self._printChanges())
         VStack {
             Picker("DisplayMode", selection: $store.displayMode.animation()) {
                 ForEach(CalendarDisplayMode.allCases, id: \.self) { displaymode in
