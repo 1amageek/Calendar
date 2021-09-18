@@ -20,15 +20,24 @@ public struct ForWeek<Data, Content>: View where Data: RandomAccessCollection, D
 
     var content: (Data.Element) -> Content
 
-    var dateFormatter: DateFormatter
-
     public init(_ data: Data, spacing: CGFloat = 4, @ViewBuilder content: @escaping (Data.Element) -> Content) {
         self.data = data
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "E"
-        self.dateFormatter = dateFormatter
         self.spacing = spacing
         self.content = content
+    }
+
+    var dateFormatter: DateFormatter {
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeZone = store.timeZone
+        dateFormatter.dateFormat = "E"
+        return dateFormatter
+    }
+
+    var dayFormatter: DateFormatter {
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeZone = store.timeZone
+        dateFormatter.dateFormat = "d"
+        return dateFormatter
     }
 
     func header(dateRange: DateRange) -> some View {
@@ -40,10 +49,10 @@ public struct ForWeek<Data, Content>: View where Data: RandomAccessCollection, D
                             .fill(Color.accentColor)
                             .frame(width: 32, height: 32)
                             .overlay {
-                                Text("\(date.day)")
+                                Text(date, formatter: dayFormatter)
                             }
                     } else {
-                        Text("\(date.day)")
+                        Text(date, formatter: dayFormatter)
                     }
 
                     Text(date, formatter: dateFormatter)
