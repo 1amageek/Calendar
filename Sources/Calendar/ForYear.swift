@@ -19,7 +19,7 @@ public struct ForYear<Data, Content>: View where Data: RandomAccessCollection, D
 
     var content: (Date) -> Content
 
-    public init(_ data: Data, columns: [GridItem], spacing: CGFloat = 28, @ViewBuilder content: @escaping (Date) -> Content) {
+    public init(_ data: Data, columns: [GridItem], spacing: CGFloat = 18, @ViewBuilder content: @escaping (Date) -> Content) {
         self.data = data
         self.spacing = spacing
         self.columns = columns
@@ -33,6 +33,9 @@ public struct ForYear<Data, Content>: View where Data: RandomAccessCollection, D
     }
 
     func foreground(month: Date, date: Date) -> Color? {
+        if store.calendar.isDateInToday(date) {
+            return Color.white
+        }
         if month.month != date.month {
             return Color(.systemGray4)
         }
@@ -48,11 +51,10 @@ public struct ForYear<Data, Content>: View where Data: RandomAccessCollection, D
         return dateFormatter
     }
 
-
     func forYear(year: Date, size: CGSize) -> some View {
         LazyVGrid(columns: columns, spacing: spacing) {
             ForEach(DateRange(year, range: 0..<12, component: .month)) { month in
-                VStack {
+                VStack(spacing: 0) {
                     HStack {
                         Text(month, formatter: dateFormatter)
                             .font(.title2)
