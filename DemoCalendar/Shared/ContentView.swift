@@ -69,7 +69,32 @@ struct ContentView: View {
                 }
             }
             .pickerStyle(SegmentedPickerStyle())
-            Slider(value: $value)
+            HStack {
+                Text(store.headerTitle)
+                    .font(.largeTitle)
+                    .fontWeight(.black)
+                Spacer()
+
+                Group {
+                    Button {
+
+                    } label: {
+                        Image(systemName: "chevron.backward")
+                    }
+
+                    Button("Today") {
+
+                    }
+
+                    Button {
+
+                    } label: {
+                        Image(systemName: "chevron.forward")
+                    }
+                }
+                .buttonStyle(.bordered)
+            }
+            .padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
             Calendar(calendarItems) { date in
                 RoundedRectangle(cornerRadius: 8)
                     .fill(Color.green)

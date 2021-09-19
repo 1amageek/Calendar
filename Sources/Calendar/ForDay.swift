@@ -25,30 +25,13 @@ public struct ForDay<Data, Content>: View where Data: RandomAccessCollection, Da
         self.content = content
     }
 
-    var dateFormatter: DateFormatter {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYY年M月d日"
-        return dateFormatter
-    }
-
-    var weekdayFormatter: DateFormatter {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "E"
-        return dateFormatter
-    }
-
     func header(dateRange: DateRange) -> some View {
         HStack {
-            VStack(alignment: .leading) {
-                Text(store.selectedDate, formatter: dateFormatter)
-                    .font(.largeTitle)
-                    .bold()
-                Text(store.selectedDate, formatter: weekdayFormatter)
-                    .font(.largeTitle)
-            }
-            .padding()
+            Text(store.displayedDate, formatter: store.weekdayFormatter)
+                .font(.largeTitle)
             Spacer()
         }
+        .padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
     }
 
     @ViewBuilder
@@ -67,7 +50,7 @@ public struct ForDay<Data, Content>: View where Data: RandomAccessCollection, Da
     }
 
     public var body: some View {
-        let dateRange = DateRange(store.selectedDate, range: (0..<1), component: .day)
+        let dateRange = DateRange(store.displayedDate, range: (0..<1), component: .day)
         VStack {
             header(dateRange: dateRange)
             HStack {

@@ -13,7 +13,6 @@ public final class Store: ObservableObject {
     @Published public var displayMode: CalendarDisplayMode {
         didSet {
             self.displayedDate = Self.displayedDate(self.selectedDate, displayMode: displayMode)
-            print("ww", displayedDate)
         }
     }
 
@@ -44,6 +43,8 @@ public final class Store: ObservableObject {
 
     public var today: Date
 
+    public var headerTitle: String { titleFormatter.string(from: displayedDate) }
+
     var calendar: Foundation.Calendar
 
     var timeZone: TimeZone
@@ -65,5 +66,35 @@ public final class Store: ObservableObject {
             case .month: return date.firstDayOfTheMonth
             case .year: return date.firstDayOfTheYear
         }
+    }
+}
+
+extension Store {
+
+    var titleFormatter: DateFormatter {
+        let dateFormatter = DateFormatter()
+        switch displayMode {
+            case .day:
+                dateFormatter.dateFormat = "YYYY年M月d日"
+            case .week:
+                dateFormatter.dateFormat = "YYYY年M月"
+            case .month:
+                dateFormatter.dateFormat = "YYYY年M月"
+            case .year:
+                dateFormatter.dateFormat = "YYYY年"
+        }
+        return dateFormatter
+    }
+
+    var dayFormatter: DateFormatter {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "d"
+        return dateFormatter
+    }
+
+    var weekdayFormatter: DateFormatter {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "E"
+        return dateFormatter
     }
 }

@@ -91,6 +91,16 @@ extension Date {
         return calendar.component(.weekday, from: self)
     }
 
+    public var weekOfMonth: Int {
+        let calendar = Foundation.Calendar(identifier: .gregorian)
+        return calendar.component(.weekOfMonth, from: self)
+    }
+
+    public var weekOfYear: Int {
+        let calendar = Foundation.Calendar(identifier: .gregorian)
+        return calendar.component(.weekOfYear, from: self)
+    }
+
     public var day: Int {
         let calendar = Foundation.Calendar(identifier: .gregorian)
         return calendar.component(.day, from: self)

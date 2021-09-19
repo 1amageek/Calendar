@@ -86,8 +86,16 @@ public struct Calendar<Data, Content>: View where Data: RandomAccessCollection, 
     }
 
     var forDay: some View {
-        ForDay(data) { item in
-            content(item)
+        HStack {
+            ForDay(data) { item in
+                content(item)
+            }
+            VStack {
+                DatePicker("", selection: $store.displayedDate, displayedComponents: .date)
+                    .datePickerStyle(.graphical)
+                Spacer()
+            }
+            .frame(maxWidth: 400)
         }
     }
 
@@ -143,25 +151,48 @@ struct Calendar_Previews: PreviewProvider {
         @StateObject var store: Store = Store(displayMode: .month, today: Date())
 
         var event: Event {
-            let hour = Int(24 * value)
-            var dateComopnents = store.calendar.dateComponents(in: TimeZone.current, from: Date())
-            dateComopnents.hour = hour
+            let dateComopnents = store.calendar.dateComponents(in: TimeZone.current, from: Date())
             let startDate = store.calendar.date(from: dateComopnents)!
             let period = startDate..<Date().date(byAdding: .hour, value: 4)
             return Event(id: "id", occurrenceDate: Date(), period: period)
         }
 
-        @State var value: Float = 0
-
         var body: some View {
-            VStack {
+            VStack(spacing: 8) {
                 Picker("DisplayMode", selection: $store.displayMode.animation()) {
                     ForEach(CalendarDisplayMode.allCases, id: \.self) { displaymode in
                         Text(displaymode.text)
                     }
                 }
                 .pickerStyle(SegmentedPickerStyle())
-                Slider(value: $value)
+
+                HStack {
+                    Text(store.headerTitle)
+                        .font(.largeTitle)
+                        .fontWeight(.black)
+                    Spacer()
+
+                    Group {
+                        Button {
+
+                        } label: {
+                            Image(systemName: "chevron.backward")
+                        }
+
+                        Button("Today") {
+                            
+                        }
+
+                        Button {
+
+                        } label: {
+                            Image(systemName: "chevron.forward")
+                        }
+                    }
+                    .buttonStyle(.bordered)
+                }
+                .padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
+
                 Calendar(RecurrenceScheduler.calendarItems(event, range: store.displayedRange)) { date in
                     RoundedRectangle(cornerRadius: 8)
                         .fill(Color.green)
@@ -174,5 +205,6 @@ struct Calendar_Previews: PreviewProvider {
 
     static var previews: some View {
         ContentView()
+            .previewInterfaceOrientation(.landscapeLeft)
     }
 }

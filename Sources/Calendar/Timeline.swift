@@ -98,7 +98,6 @@ public struct Timeline<Data, Content>: View where Data: RandomAccessCollection, 
                             self.scrollViewOffset = frame.origin
                         }
                 })
-
             }
             .coordinateSpace(name: "timeline.scroll")
         }

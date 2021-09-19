@@ -98,6 +98,14 @@ public struct DateRange {
         let upperBound = range.upperBound - range.lowerBound
         return DateRange(date, range: (lowerBound..<upperBound), component: .year)
     }
+
+    public static func weekOfYear(year: Int) -> Self {
+        let calendar = Foundation.Calendar(identifier: .gregorian)
+        let dateComponents = DateComponents(calendar: calendar, timeZone: TimeZone.current, year: year)
+        let date = calendar.date(from: dateComponents)!
+        let range = calendar.range(of: .weekOfYear, in: .year, for: date)!
+        return DateRange(date, range: range, component: .weekOfYear)
+    }
 }
 
 extension DateRange {

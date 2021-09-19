@@ -19,7 +19,7 @@ public struct ForYear<Data, Content>: View where Data: RandomAccessCollection, D
 
     var content: (Date) -> Content
 
-    public init(_ data: Data, columns: [GridItem], spacing: CGFloat = 32, @ViewBuilder content: @escaping (Date) -> Content) {
+    public init(_ data: Data, columns: [GridItem], spacing: CGFloat = 28, @ViewBuilder content: @escaping (Date) -> Content) {
         self.data = data
         self.spacing = spacing
         self.columns = columns
@@ -61,7 +61,7 @@ public struct ForYear<Data, Content>: View where Data: RandomAccessCollection, D
                         Spacer()
                     }
                     Month(month) { date in
-                        Text("\(date.day)")
+                        Text(date, formatter: store.dayFormatter)
                             .foregroundColor(foreground(month: month, date: date))
                             .background {
                                 if store.calendar.isDateInToday(date) {
