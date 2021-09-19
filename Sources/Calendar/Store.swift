@@ -16,7 +16,7 @@ public final class Store: ObservableObject {
         }
     }
 
-    @Published var displayedDate: Date
+    @Published public var displayedDate: Date
 
     @Published public var selectedDate: Date
 
