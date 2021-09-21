@@ -28,7 +28,8 @@ public struct ForDay<Data, Content>: View where Data: RandomAccessCollection, Da
     func header(dateRange: DateRange) -> some View {
         HStack {
             Text(store.displayedDate, formatter: store.weekdayFormatter)
-                .font(.largeTitle)
+                .font(.title2)
+                .fontWeight(.semibold)
             Spacer()
         }
         .padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))

@@ -33,13 +33,6 @@ public struct ForWeek<Data, Content>: View where Data: RandomAccessCollection, D
         return dateFormatter
     }
 
-    var dayFormatter: DateFormatter {
-        let dateFormatter = DateFormatter()
-        dateFormatter.timeZone = store.timeZone
-        dateFormatter.dateFormat = "d"
-        return dateFormatter
-    }
-
     func header(dateRange: DateRange) -> some View {
         return LazyVGrid(columns: dateRange.map { _ in GridItem(.flexible(), spacing: 0) }) {
             ForEach(dateRange) { date in
@@ -49,13 +42,13 @@ public struct ForWeek<Data, Content>: View where Data: RandomAccessCollection, D
                             .fill(Color.accentColor)
                             .frame(width: 32, height: 32)
                             .overlay {
-                                Text(date, formatter: dayFormatter)
+                                Text(date, formatter: store.dayFormatter)
                             }
                     } else {
-                        Text(date, formatter: dayFormatter)
+                        Text(date, formatter: store.dayFormatter)
                     }
 
-                    Text(date, formatter: dateFormatter)
+                    Text(date, formatter: store.dayFormatter)
                 }
             }
         }

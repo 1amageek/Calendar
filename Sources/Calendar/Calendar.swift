@@ -33,6 +33,10 @@ public struct CalendarTag: Hashable {
 
 public struct Calendar<Data, Content>: View where Data: RandomAccessCollection, Data.Element: CalendarItemRepresentable, Content: View {
 
+#if os(iOS)
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+#endif
+
     @EnvironmentObject var store: Store
 
     var data: Data
@@ -64,10 +68,15 @@ public struct Calendar<Data, Content>: View where Data: RandomAccessCollection, 
     }
 
     var forYear: some View {
-        ForYear(data, columns: [
-            GridItem(.flexible(), spacing: 24),
-            GridItem(.flexible(), spacing: 24),
-            GridItem(.flexible(), spacing: 24)
+#if os(iOS)
+        let spacing: CGFloat = horizontalSizeClass == .compact ? 5 : 24
+#else
+        let spacing: CGFloat = 24
+#endif
+        return ForYear(data, columns: [
+            GridItem(.flexible(), spacing: spacing),
+            GridItem(.flexible(), spacing: spacing),
+            GridItem(.flexible(), spacing: spacing)
         ]) { date in
 
         }
@@ -168,7 +177,7 @@ struct Calendar_Previews: PreviewProvider {
 
                 HStack {
                     Text(store.headerTitle)
-                        .font(.largeTitle)
+                        .font(.title)
                         .fontWeight(.black)
                     Spacer()
 

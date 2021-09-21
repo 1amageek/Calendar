@@ -9,6 +9,10 @@ import SwiftUI
 
 public struct ForYear<Data, Content>: View where Data: RandomAccessCollection, Data.Element: CalendarItemRepresentable, Content: View {
 
+#if os(iOS)
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+#endif
+
     @EnvironmentObject var store: Store
 
     var data: Data
@@ -51,25 +55,44 @@ public struct ForYear<Data, Content>: View where Data: RandomAccessCollection, D
         return dateFormatter
     }
 
+    @ViewBuilder
+    var todayCircle: some View {
+#if os(iOS)
+        let size: CGFloat = horizontalSizeClass == .compact ? 20 : 32
+        Circle()
+            .fill(Color.accentColor)
+            .frame(width: size, height: size)
+#else
+        Circle()
+            .fill(Color.accentColor)
+            .frame(width: 32, height: 32)
+#endif
+    }
+
     func forYear(year: Date, size: CGSize) -> some View {
         LazyVGrid(columns: columns, spacing: spacing) {
             ForEach(DateRange(year, range: 0..<12, component: .month)) { month in
                 VStack(spacing: 0) {
                     HStack {
                         Text(month, formatter: dateFormatter)
+#if os(iOS)
+                            .font(horizontalSizeClass == .compact ? .headline : .title3)
+#else
                             .font(.title2)
+#endif
                             .foregroundColor(Color.accentColor)
-                            .padding(.leading, 8)
+                            .padding(.leading, 4)
                         Spacer()
                     }
                     Month(month) { date in
                         Text(date, formatter: store.dayFormatter)
+#if os(iOS)
+                            .font(horizontalSizeClass == .compact ? .caption2 : .body)
+#endif
                             .foregroundColor(foreground(month: month, date: date))
                             .background {
                                 if store.calendar.isDateInToday(date) {
-                                    Circle()
-                                        .fill(Color.accentColor)
-                                        .frame(width: 32, height: 32)
+                                    todayCircle
                                 }
                             }
                             .id(date.dayTag)
@@ -103,6 +126,10 @@ public struct ForYear<Data, Content>: View where Data: RandomAccessCollection, D
 
 struct Month<Content>: View where Content: View {
 
+#if os(iOS)
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+#endif
+
     @EnvironmentObject var store: Store
 
     var month: Date
@@ -134,11 +161,18 @@ struct Month<Content>: View where Content: View {
 
     func header(_ size: CGSize) -> some View {
         LazyVGrid(columns: columns, spacing: 0) {
-            ForEach(Foundation.Calendar.current.shortWeekdaySymbols, id: \.self) { weekdaySymbol in
+#if os(iOS)
+            let weekdaySymbols = horizontalSizeClass == .compact ? Foundation.Calendar.current.veryShortWeekdaySymbols : Foundation.Calendar.current.shortWeekdaySymbols
+#else
+            let weekdaySymbols = Foundation.Calendar.current.shortWeekdaySymbols
+#endif
+            ForEach(weekdaySymbols.indices, id: \.self) { index in
                 VStack {
-                    Text("\(weekdaySymbol)")
+                    Text(weekdaySymbols[index])
+                        .font(.caption2)
                 }
             }
+
         }
         .frame(height: self.size(size).height)
     }
@@ -168,9 +202,9 @@ struct ForYear_Previews: PreviewProvider {
         ForYear([
             CalendarItem(id: "id", period: Date()..<Date().date(byAdding: .day, value: 1))
         ], columns: [
-            GridItem(.flexible(), spacing: 24),
-            GridItem(.flexible(), spacing: 24),
-            GridItem(.flexible(), spacing: 24)
+            GridItem(.flexible(), spacing: 5),
+            GridItem(.flexible(), spacing: 5),
+            GridItem(.flexible(), spacing: 5)
         ]) { month in
 
         }

@@ -36,6 +36,26 @@ public struct ForMonth<Data, Content>: View where Data: RandomAccessCollection, 
         ]
     }
 
+    var dayFormatter: DateFormatter {
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeZone = store.timeZone
+        dateFormatter.dateFormat = "d"
+        return dateFormatter
+    }
+
+    func foreground(month: Date, date: Date) -> Color? {
+        if store.calendar.isDateInToday(date) {
+            return Color.white
+        }
+        if month.month != date.month {
+            return Color(.systemGray4)
+        }
+        if store.calendar.isDateInWeekend(date) {
+            return Color(.systemGray)
+        }
+        return nil
+    }
+
     func size(_ size: CGSize) -> CGSize {
         let height = (size.height - headerHeight) / 6
         let width = size.width / 7
@@ -44,7 +64,8 @@ public struct ForMonth<Data, Content>: View where Data: RandomAccessCollection, 
 
     func cell(_ date: Date) -> some View {
         VStack(alignment: .trailing, spacing: 0) {
-            Text("\(date.day)")
+            Text(date, formatter: store.dayFormatter)
+                .foregroundColor(foreground(month: store.displayedDate, date: date))
                 .background {
                     if store.calendar.isDateInToday(date) {
                         Circle()
@@ -58,7 +79,6 @@ public struct ForMonth<Data, Content>: View where Data: RandomAccessCollection, 
             #else
                 .padding()
             #endif
-
 
             let items = data.filter({ store.calendar.isDate($0.period.lowerBound, inSameDayAs: date) || store.calendar.isDate($0.period.upperBound, inSameDayAs: date) })
             VStack {
@@ -79,6 +99,8 @@ public struct ForMonth<Data, Content>: View where Data: RandomAccessCollection, 
             ForEach(Foundation.Calendar.current.shortWeekdaySymbols, id: \.self) { weekdaySymbol in
                 VStack {
                     Text("\(weekdaySymbol)")
+                        .font(.caption)
+                        .bold()
                 }
             }
         }
@@ -114,7 +136,7 @@ public struct ForMonth<Data, Content>: View where Data: RandomAccessCollection, 
                                     let offsetY = -backgroundProxy.frame(in: .named("forMonth.scroll")).origin.y
                                     let height = proxy.size.height - headerHeight
                                     let cellHeight = height / 6
-                                    let weekOfYear = Int(offsetY / cellHeight) + 1
+                                    let weekOfYear = Int(offsetY / cellHeight) + 2
                                     let date = store.today.firstDayOfTheYear.date(byAdding: .weekOfYear, value: weekOfYear)
                                     if store.displayedDate.month != date.month {
                                         store.displayedDate = date
@@ -139,7 +161,7 @@ struct ForMonth_Previews: PreviewProvider {
 
         var body: some View {
             Text(store.headerTitle)
-                .font(.largeTitle)
+                .font(.title)
                 .fontWeight(.black)
         }
     }
