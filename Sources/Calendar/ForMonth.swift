@@ -62,8 +62,16 @@ public struct ForMonth<Data, Content>: View where Data: RandomAccessCollection, 
         return CGSize(width: width, height: height)
     }
 
+    var cellAlignment: HorizontalAlignment {
+#if os(iOS)
+        return horizontalSizeClass == .compact ? .center : .leading
+#else
+        return .leading
+#endif
+    }
+
     func cell(_ date: Date) -> some View {
-        VStack(alignment: .trailing, spacing: 0) {
+        VStack(alignment: cellAlignment, spacing: 0) {
             Text(date, formatter: store.dayFormatter)
                 .foregroundColor(foreground(month: store.displayedDate, date: date))
                 .background {
