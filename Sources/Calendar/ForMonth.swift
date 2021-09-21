@@ -11,6 +11,10 @@ public struct ForMonth<Data, Content>: View where Data: RandomAccessCollection, 
 
     @EnvironmentObject var store: Store
 
+#if os(iOS)
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+#endif
+
     var data: Data
 
     var content: (Data.Element) -> Content
@@ -48,7 +52,14 @@ public struct ForMonth<Data, Content>: View where Data: RandomAccessCollection, 
                             .frame(width: 32, height: 32)
                     }
                 }
+
+            #if os(iOS)
+                .padding(.all, horizontalSizeClass == .compact ? 8 : nil)
+            #else
                 .padding()
+            #endif
+
+
             let items = data.filter({ store.calendar.isDate($0.period.lowerBound, inSameDayAs: date) || store.calendar.isDate($0.period.upperBound, inSameDayAs: date) })
             VStack {
                 ForEach(items, id: \.self) { item in
@@ -167,6 +178,5 @@ struct ForMonth_Previews: PreviewProvider {
         }
 
         .environmentObject(Store(displayMode: .month, today: Date()))
-        .previewInterfaceOrientation(.landscapeLeft)
     }
 }

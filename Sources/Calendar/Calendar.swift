@@ -205,6 +205,6 @@ struct Calendar_Previews: PreviewProvider {
 
     static var previews: some View {
         ContentView()
-            .previewInterfaceOrientation(.landscapeLeft)
+//            .previewInterfaceOrientation(.landscapeLeft)
     }
 }
