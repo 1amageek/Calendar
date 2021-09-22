@@ -8,7 +8,7 @@
 import Foundation
 
 
-public struct CalendarItem: CalendarItemRepresentable {
+public struct CalendarItem: CalendarItemRepresentable, Codable {
 
     public var id: String
 
