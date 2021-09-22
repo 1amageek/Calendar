@@ -111,15 +111,18 @@ extension Timeline {
     }
 }
 
-public struct TimelineRuler: View {
+public struct TimelineRuler<Content>: View where Content: View {
 
     var range: Range<Int>
 
     var scale: CGFloat
 
-    public init(_ range: Range<Int> = 0..<25, scale: CGFloat = 1.8) {
+    var content: (String) -> Content
+
+    public init(_ range: Range<Int> = 0..<25, scale: CGFloat = 1.8, @ViewBuilder content: @escaping (String) -> Content) {
         self.range = range
         self.scale = scale
+        self.content = content
     }
 
     func rect(index: Int, size: CGSize) -> CGRect {
@@ -137,12 +140,9 @@ public struct TimelineRuler: View {
             ZStack {
                 ForEach(range) { index in
                     let frame = rect(index: index, size: proxy.size)
-                    HStack {
-                        Spacer()
-                        Text("\(index):00")
-                    }
-                    .frame(width: frame.width, height: frame.height)
-                    .position(frame.origin)
+                    content("\(index):00")
+                        .frame(width: frame.width, height: frame.height)
+                        .position(frame.origin)
                 }
             }
         }

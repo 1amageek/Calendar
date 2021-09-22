@@ -55,14 +55,8 @@ public struct ForDay<Data, Content>: View where Data: RandomAccessCollection, Da
         VStack {
             header(dateRange: dateRange)
             HStack {
-                GeometryReader { proxy in
-                    ScrollView(.vertical) {
-                        TimelineRuler()
-                            .frame(height: proxy.size.height)
-                            .offset(y: offset.y)
-                    }
-                }
-                .frame(width: 100)
+                Ruler(offset: offset)
+//                    .padding(.top, 44)
 
                 GeometryReader { proxy in
                     timeline(dateRange: dateRange)

@@ -97,7 +97,7 @@ public struct ForMonth<Data, Content>: View where Data: RandomAccessCollection, 
             Spacer()
             Divider()
         }
-        .background(store.calendar.isDateInWeekend(date) ? Color(.systemGray6) : nil)
+        .background(store.calendar.isDateInWeekend(date) ? Color(.systemGray).opacity(0.08) : nil)
     }
 
     var headerHeight: CGFloat = 44

@@ -10,6 +10,11 @@ import PageView
 
 public struct ForWeek<Data, Content>: View where Data: RandomAccessCollection, Data.Element: CalendarItemRepresentable, Content: View {
 
+#if os(iOS)
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+#endif
+
+
     @EnvironmentObject var store: Store
 
     @State var offset: CGPoint = .zero
@@ -26,29 +31,35 @@ public struct ForWeek<Data, Content>: View where Data: RandomAccessCollection, D
         self.content = content
     }
 
-    var dateFormatter: DateFormatter {
-        let dateFormatter = DateFormatter()
-        dateFormatter.timeZone = store.timeZone
-        dateFormatter.dateFormat = "E"
-        return dateFormatter
+    @ViewBuilder
+    var todayCircle: some View {
+#if os(iOS)
+        let size: CGFloat = horizontalSizeClass == .compact ? 20 : 32
+        Circle()
+            .fill(Color.accentColor)
+            .frame(width: size, height: size)
+#else
+        Circle()
+            .fill(Color.accentColor)
+            .frame(width: 32, height: 32)
+#endif
     }
 
     func header(dateRange: DateRange) -> some View {
         return LazyVGrid(columns: dateRange.map { _ in GridItem(.flexible(), spacing: 0) }) {
             ForEach(dateRange) { date in
                 HStack {
-                    if store.calendar.isDateInToday(date) {
-                        Circle()
-                            .fill(Color.accentColor)
-                            .frame(width: 32, height: 32)
-                            .overlay {
-                                Text(date, formatter: store.dayFormatter)
-                            }
-                    } else {
-                        Text(date, formatter: store.dayFormatter)
-                    }
-
                     Text(date, formatter: store.dayFormatter)
+#if os(iOS)
+                        .font(horizontalSizeClass == .compact ? .body : .body)
+#else
+                        .font(.body)
+#endif
+                        .background {
+                            if store.calendar.isDateInToday(date) {
+                                todayCircle
+                            }
+                        }
                 }
             }
         }
@@ -75,16 +86,8 @@ public struct ForWeek<Data, Content>: View where Data: RandomAccessCollection, D
 
     public var body: some View {
         HStack {
-            GeometryReader { proxy in
-                ScrollView(.vertical) {
-                    TimelineRuler()
-                        .frame(height: proxy.size.height)
-                        .offset(y: offset.y)
-                }
-            }
-            .frame(width: 100)
-            .padding(.top, 44)
-
+            Ruler(offset: offset)
+                .padding(.top, 44)
             PageView($store.displayedDate) {
                 ForEach(DateRange(store.selectedDate, range: -100..<100, component: .weekOfYear)) { weekOfYear in
                     let dateRange = DateRange(weekOfYear, range: (0..<7), component: .day)
