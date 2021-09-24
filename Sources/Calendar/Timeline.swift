@@ -178,7 +178,7 @@ struct Timeline_Previews: PreviewProvider {
     struct Item: TimeFrameRepresentable, Hashable {
         var id: String
         var period: Range<Date>
-        var timeZone: TimeZone = TimeZone.current
+        var timeZone: TimeZone? = TimeZone.current
     }
 
     static var range: Range<Int> {

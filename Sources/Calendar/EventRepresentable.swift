@@ -8,9 +8,8 @@
 import Foundation
 import RecurrenceRule
 
-public protocol EventRepresentable: CalendarItemRepresentable {
+public protocol EventRepresentable: CalendarItemRepresentable, Recurrenceable {
 
     var occurrenceDate: Date { get }
 
-    var recurrenceRules: [RecurrenceRule] { get }
 }

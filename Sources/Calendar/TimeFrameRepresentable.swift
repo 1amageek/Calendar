@@ -9,5 +9,5 @@ import Foundation
 
 public protocol TimeFrameRepresentable: Hashable {
     var period: Range<Date> { get }
-    var timeZone: TimeZone { get }
+    var timeZone: TimeZone? { get }
 }

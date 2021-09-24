@@ -130,7 +130,7 @@ struct Calendar_Previews: PreviewProvider {
         }
 
         func hash(into hasher: inout Hasher) {
-            hasher.combine(title)
+            hasher.combine(id)
             hasher.combine(period)
         }
 
@@ -146,13 +146,11 @@ struct Calendar_Previews: PreviewProvider {
             ])
         ]
 
-        var title: String = ""
-
         var isAllDay: Bool = false
 
         var period: Range<Date> = Date()..<Date().date(byAdding: .day, value: 1)
 
-        var timeZone: TimeZone = TimeZone.current
+        var timeZone: TimeZone? = TimeZone.current
     }
 
     struct ContentView: View {

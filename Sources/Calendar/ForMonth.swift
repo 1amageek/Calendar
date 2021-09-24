@@ -48,7 +48,7 @@ public struct ForMonth<Data, Content>: View where Data: RandomAccessCollection, 
             return Color.white
         }
         if month.month != date.month {
-            return Color(.systemGray4)
+            return Color.secondary
         }
         if store.calendar.isDateInWeekend(date) {
             return Color(.systemGray)

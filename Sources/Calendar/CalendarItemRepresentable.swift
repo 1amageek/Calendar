@@ -10,7 +10,5 @@ import Foundation
 
 public protocol CalendarItemRepresentable: Identifiable, TimeFrameRepresentable {
 
-    var title: String { get }
-
     var isAllDay: Bool { get }
 }
