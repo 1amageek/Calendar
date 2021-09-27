@@ -134,69 +134,164 @@ public final class RecurrenceScheduler {
                         }
                     }
                 case .monthly:
-                    let bundle: Int = rule.daysOfTheMonth!.count
-                    let (currentRepeatFrequencyCount, remainder) = frequencyCountAndRemainder(frequency: rule.frequency, from: occurrenceDate, to: lowerBound, interval: rule.interval)
-                    let occurredCount = currentRepeatFrequencyCount * bundle
-                    if case .occurrenceCount(let occurrenceCount) = rule.recurrenceEnd {
-                        if occurrenceCount < occurredCount {
-                            continue
+                    if let daysOfTheWeek = rule.daysOfTheWeek {
+                        let bundle: Int = daysOfTheWeek.count
+                        let (currentRepeatFrequencyCount, remainder) = frequencyCountAndRemainder(frequency: rule.frequency, from: occurrenceDate, to: lowerBound, interval: rule.interval)
+                        let occurredCount = currentRepeatFrequencyCount * bundle
+                        if case .occurrenceCount(let occurrenceCount) = rule.recurrenceEnd {
+                            if occurrenceCount < occurredCount {
+                                continue
+                            }
                         }
-                    }
-                    let (repeatFrequencyCount, _) = frequencyCountAndRemainder(frequency: rule.frequency, from: (occurrenceDate - remainder.months), to: upperBound, interval: rule.interval)
-                    var numberOfFrequencyRemaining: Int = repeatFrequencyCount
-                    var numberOfCountRemaining: Int = 0
-                    if case .occurrenceCount(let occurrenceCount) = rule.recurrenceEnd {
-                        let numberOfOccurrencesRemaining = occurrenceCount - occurredCount
-                        (numberOfFrequencyRemaining, numberOfCountRemaining) = numberOfOccurrencesRemaining.quotientAndRemainder(dividingBy: bundle)
-                    }
-                    (currentRepeatFrequencyCount...numberOfFrequencyRemaining).forEach { index in
-                        for day in rule.daysOfTheMonth! {
-                            let interval: Int = rule.interval * index
+                        let (repeatFrequencyCount, _) = frequencyCountAndRemainder(frequency: rule.frequency, from: (occurrenceDate - remainder.months), to: upperBound, interval: rule.interval)
+                        var numberOfFrequencyRemaining: Int = repeatFrequencyCount
+                        var numberOfCountRemaining: Int = 0
+                        if case .occurrenceCount(let occurrenceCount) = rule.recurrenceEnd {
+                            let numberOfOccurrencesRemaining = occurrenceCount - occurredCount
+                            (numberOfFrequencyRemaining, numberOfCountRemaining) = numberOfOccurrencesRemaining.quotientAndRemainder(dividingBy: bundle)
+                        }
+                        (currentRepeatFrequencyCount...numberOfFrequencyRemaining).forEach { index in
+                            for dayOfWeek in daysOfTheWeek {
+                                let interval: Int = rule.interval * index
+                                let startOfMonth = (occurrenceDate + interval.months).dateAtStartOf(.month)
+                                let date = startOfMonth + (dayOfWeek.weekNumber * 7).days + dayOfWeek.dayOfTheWeek.rawValue.days
+                                if let calendarItem = makeCalendarItem(date: date, range: lowerBound..<upperBound) {
+                                    calendarItems.append(calendarItem)
+                                }
+                            }
+                        }
+                        (0..<numberOfCountRemaining).forEach { index in
+                            let dayOfWeek = daysOfTheWeek[index]
+                            let interval: Int = numberOfFrequencyRemaining + 1
+                            let startOfMonth = (occurrenceDate + interval.months).dateAtStartOf(.month)
+                            let date = startOfMonth + (dayOfWeek.weekNumber * 7).days + dayOfWeek.dayOfTheWeek.rawValue.days
+                            if let calendarItem = makeCalendarItem(date: date, range: lowerBound..<upperBound) {
+                                calendarItems.append(calendarItem)
+                            }
+                        }
+                    } else if let daysOfTheMonth = rule.daysOfTheMonth {
+                        let bundle: Int = daysOfTheMonth.count
+                        let days: [Int] = daysOfTheMonth
+                        let (currentRepeatFrequencyCount, remainder) = frequencyCountAndRemainder(frequency: rule.frequency, from: occurrenceDate, to: lowerBound, interval: rule.interval)
+                        let occurredCount = currentRepeatFrequencyCount * bundle
+                        if case .occurrenceCount(let occurrenceCount) = rule.recurrenceEnd {
+                            if occurrenceCount < occurredCount {
+                                continue
+                            }
+                        }
+                        let (repeatFrequencyCount, _) = frequencyCountAndRemainder(frequency: rule.frequency, from: (occurrenceDate - remainder.months), to: upperBound, interval: rule.interval)
+                        var numberOfFrequencyRemaining: Int = repeatFrequencyCount
+                        var numberOfCountRemaining: Int = 0
+                        if case .occurrenceCount(let occurrenceCount) = rule.recurrenceEnd {
+                            let numberOfOccurrencesRemaining = occurrenceCount - occurredCount
+                            (numberOfFrequencyRemaining, numberOfCountRemaining) = numberOfOccurrencesRemaining.quotientAndRemainder(dividingBy: bundle)
+                        }
+                        (currentRepeatFrequencyCount...numberOfFrequencyRemaining).forEach { index in
+                            for day in days {
+                                let interval: Int = rule.interval * index
+                                let date = occurrenceDate + interval.months + day.days
+                                if let calendarItem = makeCalendarItem(date: date, range: lowerBound..<upperBound) {
+                                    calendarItems.append(calendarItem)
+                                }
+                            }
+                        }
+                        (0..<numberOfCountRemaining).forEach { index in
+                            let day = days[index]
+                            let interval: Int = numberOfFrequencyRemaining + 1
                             let date = occurrenceDate + interval.months + day.days
                             if let calendarItem = makeCalendarItem(date: date, range: lowerBound..<upperBound) {
                                 calendarItems.append(calendarItem)
                             }
                         }
                     }
-                    (0..<numberOfCountRemaining).forEach { index in
-                        let day = rule.daysOfTheMonth![index]
-                        let interval: Int = numberOfFrequencyRemaining + 1
-                        let date = occurrenceDate + interval.months + day.days
-                        if let calendarItem = makeCalendarItem(date: date, range: lowerBound..<upperBound) {
-                            calendarItems.append(calendarItem)
-                        }
-                    }
                 case .yearly:
-                    let bundle: Int = rule.daysOfTheYear!.count
-                    let (currentRepeatFrequencyCount, remainder) = frequencyCountAndRemainder(frequency: rule.frequency, from: occurrenceDate, to: lowerBound, interval: rule.interval)
-                    let occurredCount = currentRepeatFrequencyCount * bundle
-                    if case .occurrenceCount(let occurrenceCount) = rule.recurrenceEnd {
-                        if occurrenceCount < occurredCount {
-                            continue
+                    if let monthsOfTheYear: [RecurrenceRule.Month] = rule.monthsOfTheYear {
+                        let bundle: Int = monthsOfTheYear.count
+                        let daysOfTheWeek: [RecurrenceRule.DayOfWeek] = rule.daysOfTheWeek ?? []
+                        let (currentRepeatFrequencyCount, remainder) = frequencyCountAndRemainder(frequency: rule.frequency, from: occurrenceDate, to: lowerBound, interval: rule.interval)
+                        let occurredCount = currentRepeatFrequencyCount * bundle
+                        if case .occurrenceCount(let occurrenceCount) = rule.recurrenceEnd {
+                            if occurrenceCount < occurredCount {
+                                continue
+                            }
                         }
-                    }
-                    let (repeatFrequencyCount, _) = frequencyCountAndRemainder(frequency: rule.frequency, from: (occurrenceDate - remainder.years), to: upperBound, interval: rule.interval)
-                    var numberOfFrequencyRemaining: Int = repeatFrequencyCount
-                    var numberOfCountRemaining: Int = 0
-                    if case .occurrenceCount(let occurrenceCount) = rule.recurrenceEnd {
-                        let numberOfOccurrencesRemaining = occurrenceCount - occurredCount
-                        (numberOfFrequencyRemaining, numberOfCountRemaining) = numberOfOccurrencesRemaining.quotientAndRemainder(dividingBy: bundle)
-                    }
-                    (currentRepeatFrequencyCount...numberOfFrequencyRemaining).forEach { index in
-                        for day in rule.daysOfTheYear! {
-                            let interval: Int = rule.interval * index
-                            let date = occurrenceDate + interval.years + day.days
+                        let (repeatFrequencyCount, _) = frequencyCountAndRemainder(frequency: rule.frequency, from: (occurrenceDate - remainder.years), to: upperBound, interval: rule.interval)
+                        var numberOfFrequencyRemaining: Int = repeatFrequencyCount
+                        var numberOfCountRemaining: Int = 0
+                        if case .occurrenceCount(let occurrenceCount) = rule.recurrenceEnd {
+                            let numberOfOccurrencesRemaining = occurrenceCount - occurredCount
+                            (numberOfFrequencyRemaining, numberOfCountRemaining) = numberOfOccurrencesRemaining.quotientAndRemainder(dividingBy: bundle)
+                        }
+                        (currentRepeatFrequencyCount...numberOfFrequencyRemaining).forEach { index in
+                            for month in monthsOfTheYear {
+                                let interval: Int = rule.interval * index
+                                let startOfYear = occurrenceDate.dateAtStartOf(.year) + interval.years
+                                var date = startOfYear + month.rawValue.months
+                                if daysOfTheWeek.isEmpty {
+                                    if let calendarItem = makeCalendarItem(date: date, range: lowerBound..<upperBound) {
+                                        calendarItems.append(calendarItem)
+                                    }
+                                } else {
+                                    for dayOfWeek in daysOfTheWeek {
+                                        date = date + (dayOfWeek.weekNumber * 7).days + dayOfWeek.dayOfTheWeek.rawValue.days
+                                        for dayOfWeek in daysOfTheWeek {
+                                            date = date + (dayOfWeek.weekNumber * 7).days + dayOfWeek.dayOfTheWeek.rawValue.days
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        (0..<numberOfCountRemaining).forEach { index in
+                            let month = monthsOfTheYear[index]
+                            let interval: Int = numberOfFrequencyRemaining + 1
+                            let startOfYear = occurrenceDate.dateAtStartOf(.year) + interval.years
+                            var date = startOfYear + month.rawValue.months
+                            if daysOfTheWeek.isEmpty {
+                                if let calendarItem = makeCalendarItem(date: date, range: lowerBound..<upperBound) {
+                                    calendarItems.append(calendarItem)
+                                }
+                            } else {
+                                for dayOfWeek in daysOfTheWeek {
+                                    date = date + (dayOfWeek.weekNumber * 7).days + dayOfWeek.dayOfTheWeek.rawValue.days
+                                    for dayOfWeek in daysOfTheWeek {
+                                        date = date + (dayOfWeek.weekNumber * 7).days + dayOfWeek.dayOfTheWeek.rawValue.days
+                                    }
+                                }
+                            }
+                        }
+                    } else if let daysOfTheYear: [Int] = rule.daysOfTheYear {
+                        let bundle: Int = daysOfTheYear.count
+                        let days: [Int] = daysOfTheYear
+                        let (currentRepeatFrequencyCount, remainder) = frequencyCountAndRemainder(frequency: rule.frequency, from: occurrenceDate, to: lowerBound, interval: rule.interval)
+                        let occurredCount = currentRepeatFrequencyCount * bundle
+                        if case .occurrenceCount(let occurrenceCount) = rule.recurrenceEnd {
+                            if occurrenceCount < occurredCount {
+                                continue
+                            }
+                        }
+                        let (repeatFrequencyCount, _) = frequencyCountAndRemainder(frequency: rule.frequency, from: (occurrenceDate - remainder.years), to: upperBound, interval: rule.interval)
+                        var numberOfFrequencyRemaining: Int = repeatFrequencyCount
+                        var numberOfCountRemaining: Int = 0
+                        if case .occurrenceCount(let occurrenceCount) = rule.recurrenceEnd {
+                            let numberOfOccurrencesRemaining = occurrenceCount - occurredCount
+                            (numberOfFrequencyRemaining, numberOfCountRemaining) = numberOfOccurrencesRemaining.quotientAndRemainder(dividingBy: bundle)
+                        }
+                        (currentRepeatFrequencyCount...numberOfFrequencyRemaining).forEach { index in
+                            for day in days {
+                                let interval: Int = rule.interval * index
+                                let date = occurrenceDate.dateAtStartOf(.year) + interval.years + day.days
+                                if let calendarItem = makeCalendarItem(date: date, range: lowerBound..<upperBound) {
+                                    calendarItems.append(calendarItem)
+                                }
+                            }
+                        }
+                        (0..<numberOfCountRemaining).forEach { index in
+                            let day = days[index]
+                            let interval: Int = numberOfFrequencyRemaining + 1
+                            let date = occurrenceDate.dateAtStartOf(.year) + interval.years + day.days
                             if let calendarItem = makeCalendarItem(date: date, range: lowerBound..<upperBound) {
                                 calendarItems.append(calendarItem)
                             }
-                        }
-                    }
-                    (0..<numberOfCountRemaining).forEach { index in
-                        let day = rule.daysOfTheYear![index]
-                        let interval: Int = numberOfFrequencyRemaining + 1
-                        let date = occurrenceDate + interval.years + day.days
-                        if let calendarItem = makeCalendarItem(date: date, range: lowerBound..<upperBound) {
-                            calendarItems.append(calendarItem)
                         }
                     }
             }
