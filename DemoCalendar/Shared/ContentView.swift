@@ -10,7 +10,7 @@ import Calendar
 import RecurrenceRule
 import SwiftDate
 
-struct Event: EventRepresentable {
+struct Event: CalendarItemRepresentable {
 
     static func == (lhs: Event, rhs: Event) -> Bool {
         lhs.hashValue == rhs.hashValue

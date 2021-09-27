@@ -8,7 +8,7 @@
 import Foundation
 
 
-public protocol CalendarItemRepresentable: Identifiable, TimeFrameRepresentable {
+public protocol CalendarItemRepresentable: Identifiable, TimeframeRepresentable {
 
     var isAllDay: Bool { get }
 }

@@ -11,10 +11,10 @@ import RecurrenceRule
 
 public final class RecurrenceScheduler {
 
-    public static func calendarItems<Item>(_ events: [Item], range: Range<Date>) -> [CalendarItem] where Item: Recurrenceable & CalendarItemRepresentable, Item.ID == String {
-        if events.isEmpty { return [] }
-        return events.reduce(Array<CalendarItem>()) { prev, event in
-            let calendarItems = calendarItems(event, range: range)
+    public static func calendarItems<Item>(_ items: [Item], range: Range<Date>) -> [CalendarItem] where Item: Recurrenceable & CalendarItemRepresentable, Item.ID == String {
+        if items.isEmpty { return [] }
+        return items.reduce(Array<CalendarItem>()) { prev, item in
+            let calendarItems = calendarItems(item, range: range)
             return prev + calendarItems
         }
     }

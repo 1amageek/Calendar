@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public struct Timeline<Data, Content>: View where Data: RandomAccessCollection, Data.Element: TimeFrameRepresentable, Content: View {
+public struct Timeline<Data, Content>: View where Data: RandomAccessCollection, Data.Element: TimeframeRepresentable, Content: View {
 
     @Binding var scrollViewOffset: CGPoint
 
@@ -175,7 +175,7 @@ public struct TimelineBackground<Content>: View where Content: View {
 
 struct Timeline_Previews: PreviewProvider {
 
-    struct Item: TimeFrameRepresentable, Hashable {
+    struct Item: TimeframeRepresentable, Hashable {
         var id: String
         var period: Range<Date>
         var timeZone: TimeZone? = TimeZone.current

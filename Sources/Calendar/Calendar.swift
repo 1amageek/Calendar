@@ -123,9 +123,9 @@ public struct Calendar<Data, Content>: View where Data: RandomAccessCollection, 
 
 struct Calendar_Previews: PreviewProvider {
 
-    struct Event: EventRepresentable {
+    struct Event: CalendarItemRepresentable, Recurrenceable {
 
-        static func == (lhs: Calendar_Previews.Event, rhs: Calendar_Previews.Event) -> Bool {
+        static func == (lhs: Event, rhs: Event) -> Bool {
             lhs.hashValue == rhs.hashValue
         }
 
@@ -200,7 +200,7 @@ struct Calendar_Previews: PreviewProvider {
                 }
                 .padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
 
-                Calendar(RecurrenceScheduler.calendarItems(event, range: store.displayedRange)) { date in
+                Calendar([event]) { date in
                     RoundedRectangle(cornerRadius: 8)
                         .fill(Color.green)
                         .padding(1)                        

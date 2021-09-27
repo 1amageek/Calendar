@@ -8,7 +8,7 @@
 import Foundation
 import RecurrenceRule
 
-public protocol Recurrenceable: TimeFrameRepresentable {
+public protocol Recurrenceable: TimeframeRepresentable {
 
     var occurrenceDate: Date { get }
 
