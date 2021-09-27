@@ -7,6 +7,7 @@
 
 import Foundation
 import CoreGraphics
+import SwiftDate
 
 public final class Store: ObservableObject {
 
@@ -23,20 +24,20 @@ public final class Store: ObservableObject {
     public var displayedRange: Range<Date> {
         switch displayMode {
             case .day:
-                let startDate = displayedDate.firstDayOfTheDay
-                let endDate = startDate.date(byAdding: .day, value: 1)
+                let startDate = displayedDate.dateAtStartOf(.day)
+                let endDate = startDate + 1.days
                 return startDate..<endDate
             case .week:
-                let startDate = displayedDate.firstDayOfTheWeek
-                let endDate = startDate.date(byAdding: .day, value: 7)
+                let startDate = displayedDate.dateAtStartOf(.weekOfYear)
+                let endDate = startDate + 1.weeks
                 return startDate..<endDate
             case .month:
-                let startDate = displayedDate.firstDayOfTheMonth
-                let endDate = startDate.date(byAdding: .month, value: 1)
+                let startDate = displayedDate.dateAtStartOf(.month)
+                let endDate = startDate + 1.months
                 return startDate..<endDate
             case .year:
-                let startDate = displayedDate.firstDayOfTheYear
-                let endDate = startDate.date(byAdding: .year, value: 1)
+                let startDate = displayedDate.dateAtStartOf(.year)
+                let endDate = startDate + 1.years
                 return startDate..<endDate
         }
     }
@@ -61,10 +62,10 @@ public final class Store: ObservableObject {
 
     static func displayedDate(_ date: Date, displayMode: CalendarDisplayMode) -> Date {
         switch displayMode {
-            case .day: return date.firstDayOfTheDay
-            case .week: return date.firstDayOfTheWeek
-            case .month: return date.firstDayOfTheMonth
-            case .year: return date.firstDayOfTheYear
+            case .day: return date.dateAtStartOf(.day)
+            case .week: return date.dateAtStartOf(.weekOfYear)
+            case .month: return date.dateAtStartOf(.month)
+            case .year: return date.dateAtStartOf(.year)
         }
     }
 }
@@ -75,13 +76,13 @@ extension Store {
         let dateFormatter = DateFormatter()
         switch displayMode {
             case .day:
-                dateFormatter.dateFormat = "YYYY年M月d日"
+                dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "YYYYMd", options: 0, locale: Locale.current)
             case .week:
-                dateFormatter.dateFormat = "YYYY年M月"
+                dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "YYYYM", options: 0, locale: Locale.current)
             case .month:
-                dateFormatter.dateFormat = "YYYY年M月"
+                dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "YYYYM", options: 0, locale: Locale.current)
             case .year:
-                dateFormatter.dateFormat = "YYYY年"
+                dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "YYYY", options: 0, locale: Locale.current)
         }
         return dateFormatter
     }
@@ -94,7 +95,7 @@ extension Store {
 
     var weekdayFormatter: DateFormatter {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "E"
+        dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "EEEEE", options: 0, locale: Locale.current)
         return dateFormatter
     }
 }

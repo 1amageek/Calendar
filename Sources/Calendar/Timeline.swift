@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftDate
 
 public struct Timeline<Data, Content>: View where Data: RandomAccessCollection, Data.Element: TimeframeRepresentable, Content: View {
 
@@ -186,20 +187,16 @@ struct Timeline_Previews: PreviewProvider {
         return calenar.range(of: .weekOfMonth, in: .year, for: Date())!
     }
 
-    static func date(weekOfYear: Int) -> Date {
-        let calendar = Foundation.Calendar.current
-        return calendar.date(byAdding: .weekOfYear, value: weekOfYear, to: calendar.firstDayOfTheYear(date: Date()))!
-    }
-
     static var previews: some View {
+        let startDay = Date().dateAtStartOf(.weekOfYear)
+        let endDay = startDay + 1.hours
         GeometryReader { proxy in
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHGrid(rows: [GridItem(.fixed(proxy.size.height))]) {
                     ForEach(range) { weekOfYear in
                         Timeline([
-                            Item(id: "0", period: (Date().date(weekOfYear: 0)..<Date().date(weekOfYear: 2))),
-                        ]
-                                 , range: Date().date(weekOfYear: weekOfYear)..<Date().date(weekOfYear: weekOfYear + 1), columns: 7) { index in
+                            Item(id: "0", period: startDay..<endDay),
+                        ], range: startDay..<(startDay + 1.days), columns: 7) { index in
                             RoundedRectangle(cornerRadius: 8)
                                 .fill(Color.green)
                                 .padding(1)

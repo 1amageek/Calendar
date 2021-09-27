@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftDate
 
 public struct ForYear<Data, Content>: View where Data: RandomAccessCollection, Data.Element: CalendarItemRepresentable, Content: View {
 
@@ -115,7 +116,7 @@ public struct ForYear<Data, Content>: View where Data: RandomAccessCollection, D
                     }
                     .compositingGroup()
                     .onAppear {
-                        scrollViewProxy.scrollTo(store.selectedDate.firstDayOfTheYear.yearTag)
+                        scrollViewProxy.scrollTo(store.selectedDate.dateAtStartOf(.year).yearTag)
                     }
                 }
             }
@@ -181,7 +182,7 @@ struct Month<Content>: View where Content: View {
         GeometryReader { proxy in
             LazyVGrid(columns: columns, spacing: 0, pinnedViews: []) {
                 Section {
-                    ForEach(DateRange(month.firstDayOfTheWeek, range: 0..<42, component: .day)) { date in
+                    ForEach(DateRange(month.dateAtStartOf(.weekOfYear), range: 0..<42, component: .day)) { date in
                         let size = size(proxy.size)
                         content(date)
                             .frame(width: size.width, height: size.height)
@@ -200,7 +201,7 @@ struct ForYear_Previews: PreviewProvider {
 
     static var previews: some View {
         ForYear([
-            CalendarItem(id: "id", period: Date()..<Date().date(byAdding: .day, value: 1))
+            CalendarItem(id: "id", period: Date()..<(Date() + 1.hours))
         ], columns: [
             GridItem(.flexible(), spacing: 5),
             GridItem(.flexible(), spacing: 5),

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftDate
 
 public struct ForDay<Data, Content>: View where Data: RandomAccessCollection, Data.Element: CalendarItemRepresentable, Content: View {
 
@@ -56,8 +57,6 @@ public struct ForDay<Data, Content>: View where Data: RandomAccessCollection, Da
             header(dateRange: dateRange)
             HStack {
                 Ruler(offset: offset)
-//                    .padding(.top, 44)
-
                 GeometryReader { proxy in
                     timeline(dateRange: dateRange)
                         .frame(width: proxy.size.width, height: proxy.size.height)
@@ -72,7 +71,7 @@ struct ForDay_Previews: PreviewProvider {
 
     static var previews: some View {
         ForDay([
-            CalendarItem(id: "id", period: Date()..<Date().date(byAdding: .day, value: 1))
+            CalendarItem(id: "id", period: Date()..<(Date() + 1.hours))
         ]) { date in
             RoundedRectangle(cornerRadius: 8)
                 .fill(Color.green)

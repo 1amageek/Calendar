@@ -7,6 +7,7 @@
 
 import SwiftUI
 import PageView
+import SwiftDate
 
 public struct ForWeek<Data, Content>: View where Data: RandomAccessCollection, Data.Element: CalendarItemRepresentable, Content: View {
 
@@ -102,7 +103,7 @@ struct ForWeek_Previews: PreviewProvider {
 
     static var previews: some View {
         ForWeek([
-            CalendarItem(id: "id", period: Date()..<Date().date(byAdding: .day, value: 1))
+            CalendarItem(id: "id", period: Date()..<(Date() + 1.hours))
         ]) { date in
             RoundedRectangle(cornerRadius: 8)
                 .fill(Color.green)

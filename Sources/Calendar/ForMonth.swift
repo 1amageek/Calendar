@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftDate
 
 public struct ForMonth<Data, Content>: View where Data: RandomAccessCollection, Data.Element: CalendarItemRepresentable, Content: View {
 
@@ -145,7 +146,7 @@ public struct ForMonth<Data, Content>: View where Data: RandomAccessCollection, 
                                     let height = proxy.size.height - headerHeight
                                     let cellHeight = height / 6
                                     let weekOfYear = Int(offsetY / cellHeight) + 2
-                                    let date = store.today.firstDayOfTheYear.date(byAdding: .weekOfYear, value: weekOfYear)
+                                    let date = store.today.dateAtStartOf(.year) + weekOfYear.weeks
                                     if store.displayedDate.month != date.month {
                                         store.displayedDate = date
                                     }
@@ -200,7 +201,7 @@ struct ForMonth_Previews: PreviewProvider {
             }
             .padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
             ForMonth([
-                CalendarItem(id: "id", period: Date()..<Date().date(byAdding: .day, value: 1))
+                CalendarItem(id: "id", period: Date()..<(Date() + 1.hours))
             ]) { date in
                 Rectangle()
                     .padding(4)

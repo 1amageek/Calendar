@@ -7,6 +7,7 @@
 
 import SwiftUI
 import RecurrenceRule
+import SwiftDate
 
 public enum CalendarDisplayMode: CaseIterable {
     case day
@@ -148,7 +149,7 @@ struct Calendar_Previews: PreviewProvider {
 
         var isAllDay: Bool = false
 
-        var period: Range<Date> = Date()..<Date().date(byAdding: .day, value: 1)
+        var period: Range<Date> = Date()..<(Date() + 1.hours)
 
         var timeZone: TimeZone? = TimeZone.current
     }
@@ -160,8 +161,8 @@ struct Calendar_Previews: PreviewProvider {
         var event: Event {
             let dateComopnents = store.calendar.dateComponents(in: TimeZone.current, from: Date())
             let startDate = store.calendar.date(from: dateComopnents)!
-            let period = startDate..<Date().date(byAdding: .hour, value: 4)
-            return Event(id: "id", occurrenceDate: Date(), period: period)
+            let period = startDate..<(startDate + 4.hours)
+            return Event(id: "id", occurrenceDate: startDate, period: period)
         }
 
         var body: some View {
