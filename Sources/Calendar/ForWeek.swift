@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import PageView
 
 public struct ForWeek<Data, Content>: View where Data: RandomAccessCollection, Data.Element: CalendarItemRepresentable, Content: View {
 
@@ -47,6 +46,41 @@ public struct ForWeek<Data, Content>: View where Data: RandomAccessCollection, D
     func header(dateRange: DateRange) -> some View {
         return LazyVGrid(columns: dateRange.map { _ in GridItem(.flexible(), spacing: 0) }) {
             ForEach(dateRange) { date in
+
+#if os(iOS)
+                if horizontalSizeClass == .compact {
+                    VStack {
+                        Text(date, formatter: store.weekdayFormatter)
+                            .font(.caption)
+                            .fontWeight(.regular)
+
+                        Text(date, formatter: store.dayLocalFormatter)
+                            .font(.body)
+                            .fontWeight(.regular)
+                            .foregroundColor(store.calendar.isDateInToday(date) ? .white : nil)
+                            .background {
+                                if store.calendar.isDateInToday(date) {
+                                    todayCircle
+                                }
+                            }
+                    }
+                } else {
+                    HStack {
+                        Text(date, formatter: store.dayLocalFormatter)
+                            .font(.headline)
+                            .fontWeight(.regular)
+                            .foregroundColor(store.calendar.isDateInToday(date) ? .white : nil)
+                            .background {
+                                if store.calendar.isDateInToday(date) {
+                                    todayCircle
+                                }
+                            }
+                        Text(date, formatter: store.weekdayFormatter)
+                            .font(.headline)
+                            .fontWeight(.regular)
+                    }
+                }
+#else
                 HStack {
                     Text(date, formatter: store.dayLocalFormatter)
                         .font(.headline)
@@ -61,6 +95,8 @@ public struct ForWeek<Data, Content>: View where Data: RandomAccessCollection, D
                         .font(.headline)
                         .fontWeight(.regular)
                 }
+#endif
+
             }
         }
     }

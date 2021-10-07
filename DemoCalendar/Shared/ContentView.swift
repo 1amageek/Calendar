@@ -40,10 +40,35 @@ struct ContentView: View {
     @StateObject var store: Store = Store(displayMode: .month, today: Date())
 
     var calendarItems: [CalendarItem] {
-        return [CalendarItem(id: "id", isAllDay: false, period: Date()..<(Date() + 1.days))]
+        let dateComopnents = store.calendar.dateComponents(in: TimeZone.current, from: Date())
+        let startDate = store.calendar.date(from: dateComopnents)! - 12.hours
+        return [
+            CalendarItem(id: "0", isAllDay: false, period: startDate..<(startDate + 1.hours)),
+            CalendarItem(id: "1", isAllDay: false, period: (startDate + 4.hours)..<(startDate + 5.hours)),
+            CalendarItem(id: "2", isAllDay: false, period: (startDate + 6.hours)..<(startDate + 7.hours)),
+            CalendarItem(id: "3", isAllDay: false, period: (startDate + 8.hours)..<(startDate + 9.hours)),
+        ]
     }
 
     @State var value: Float = 0
+
+    func action(item: CalendarItem) {
+        switch store.displayMode {
+
+            case .day, .week: break
+
+            case .month:
+                withAnimation {
+                    store.displayMode = .week
+                    store.displayedDate = item.period.lowerBound
+                }
+            case .year:
+                withAnimation {
+                    store.displayMode = .month
+                    store.displayedDate = item.period.lowerBound
+                }
+        }
+    }
 
     var body: some View {
         VStack {
@@ -79,12 +104,19 @@ struct ContentView: View {
                 .buttonStyle(.bordered)
             }
             .padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
-            Calendar(calendarItems) { date in
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.green)
-                    .padding(1)
+            Calendar(calendarItems) { item in
+                Button {
+                    action(item: item)
+                } label: {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.green)
+                        .padding(1)
+                }
             }
             .environmentObject(store)
+            .onAppear {
+                print(calendarItems)
+            }
         }
     }
 }

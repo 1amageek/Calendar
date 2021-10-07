@@ -157,11 +157,31 @@ struct Calendar_Previews: PreviewProvider {
 
         @StateObject var store: Store = Store(displayMode: .month, today: Date())
 
-        var event: Event {
+        var events: [Event] {
             let dateComopnents = store.calendar.dateComponents(in: TimeZone.current, from: Date())
-            let startDate = store.calendar.date(from: dateComopnents)!
-            let period = startDate..<(startDate + 4.hours)
-            return Event(id: "id", occurrenceDate: startDate, period: period)
+            let startDate = store.calendar.date(from: dateComopnents)! - 6.hours
+            return [
+                Event(id: "0", occurrenceDate: startDate, period: startDate..<(startDate + 1.hours)),
+                Event(id: "1", occurrenceDate: startDate, period: (startDate + 2.hours)..<(startDate + 2.hours))
+            ]
+        }
+
+        func action(item: Event) {
+            switch store.displayMode {
+
+                case .day, .week: break
+
+                case .month:
+                    withAnimation {
+                        store.displayMode = .week
+                        store.displayedDate = item.occurrenceDate
+                    }
+                case .year:
+                    withAnimation {
+                        store.displayMode = .month
+                        store.displayedDate = item.occurrenceDate
+                    }
+            }
         }
 
         var body: some View {
@@ -200,10 +220,14 @@ struct Calendar_Previews: PreviewProvider {
                 }
                 .padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
 
-                Calendar([event]) { date in
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(Color.green)
-                        .padding(1)                        
+                Calendar(events) { item in
+                    Button {
+                        action(item: item)
+                    } label: {
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.green)
+                            .padding(1)
+                    }
                 }
                 .environmentObject(store)
             }

@@ -89,9 +89,12 @@ public struct ForMonth<Data, Content>: View where Data: RandomAccessCollection, 
             #endif
 
             let items = data.filter({ store.calendar.isDate($0.period.lowerBound, inSameDayAs: date) || store.calendar.isDate($0.period.upperBound, inSameDayAs: date) })
-            VStack {
-                ForEach(items, id: \.self) { item in
+            VStack(spacing: 1) {
+                ForEach(items.prefix(4), id: \.self) { item in
                     content(item)
+                }
+                if items.count > 4 {
+                    Text("+ \(items.count - 4)")
                 }
             }
             Spacer()

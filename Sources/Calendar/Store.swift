@@ -10,8 +10,7 @@ import CoreGraphics
 
 public final class Store: ObservableObject {
 
-    @Published public var displayMode: CalendarDisplayMode
-    {
+    @Published public var displayMode: CalendarDisplayMode {
         didSet {
             self.displayedDate = Self.displayedDate(self.displayedDate, displayMode: displayMode, calendar: calendar)
         }
@@ -46,11 +45,16 @@ public final class Store: ObservableObject {
 
     public var headerTitle: String { titleFormatter.string(from: displayedDate) }
 
-    var calendar: Foundation.Calendar
+    public var calendar: Foundation.Calendar
 
-    var timeZone: TimeZone
+    public var timeZone: TimeZone
 
-    public init(displayMode: CalendarDisplayMode = .year, today: Date = Date(), calendar: Foundation.Calendar = Foundation.Calendar.autoupdatingCurrent, timeZone: TimeZone = TimeZone.current) {
+    public init(
+        displayMode: CalendarDisplayMode = .year,
+        today: Date = Date(),
+        calendar: Foundation.Calendar = Foundation.Calendar.autoupdatingCurrent,
+        timeZone: TimeZone = TimeZone.current
+    ) {
         self.today = today
         self.calendar = calendar
         self.timeZone = timeZone
@@ -76,11 +80,11 @@ extension Store {
         let dateFormatter = DateFormatter()
         switch displayMode {
             case .day:
-                dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "ydMMMM", options: 0, locale: .current)
+                dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "ydMMM", options: 0, locale: .current)
             case .week:
-                dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "yMMMM", options: 0, locale: .current)
+                dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "yMMM", options: 0, locale: .current)
             case .month:
-                dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "yMMMM", options: 0, locale: .current)
+                dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "yMMM", options: 0, locale: .current)
             case .year:
                 dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "y", options: 0, locale: .current)
         }

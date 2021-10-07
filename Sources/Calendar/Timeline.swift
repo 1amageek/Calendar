@@ -195,6 +195,7 @@ struct Timeline_Previews: PreviewProvider {
                     ForEach(range) { weekOfYear in
                         Timeline([
                             Item(id: "0", period: startDay..<endDay),
+                            Item(id: "1", period: (endDay + 1.hours)..<(endDay + 3.hours)),
                         ], range: startDay..<(startDay + 1.days), columns: 7) { index in
                             RoundedRectangle(cornerRadius: 8)
                                 .fill(Color.green)
