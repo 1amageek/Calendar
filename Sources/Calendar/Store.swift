@@ -13,7 +13,7 @@ public final class Store: ObservableObject {
     @Published public var displayMode: CalendarDisplayMode
     {
         didSet {
-            self.displayedDate = Self.displayedDate(self.displayedDate, displayMode: displayMode)
+            self.displayedDate = Self.displayedDate(self.displayedDate, displayMode: displayMode, calendar: calendar)
         }
     }
 
@@ -50,18 +50,17 @@ public final class Store: ObservableObject {
 
     var timeZone: TimeZone
 
-    public init(displayMode: CalendarDisplayMode = .year, today: Date = Date(), calendar: Foundation.Calendar = Foundation.Calendar(identifier: .gregorian), timeZone: TimeZone = TimeZone.current) {
+    public init(displayMode: CalendarDisplayMode = .year, today: Date = Date(), calendar: Foundation.Calendar = Foundation.Calendar.autoupdatingCurrent, timeZone: TimeZone = TimeZone.current) {
         self.today = today
         self.calendar = calendar
         self.timeZone = timeZone
-        let displayedDate = Self.displayedDate(today, displayMode: displayMode)
+        let displayedDate = Self.displayedDate(today, displayMode: displayMode, calendar: calendar)
         self._displayMode = Published(initialValue: displayMode)
         self._displayedDate = Published(initialValue: displayedDate)
         self._selectedDates = Published(initialValue: [])
     }
 
-    static func displayedDate(_ date: Date, displayMode: CalendarDisplayMode) -> Date {
-        let calendar = Foundation.Calendar(identifier: .gregorian)
+    static func displayedDate(_ date: Date, displayMode: CalendarDisplayMode, calendar: Foundation.Calendar) -> Date {
         switch displayMode {
             case .day: return calendar.dateComponents([.calendar, .timeZone, .year, .month, .day], from: date).date!
             case .week: return calendar.dateComponents([.calendar, .timeZone, .yearForWeekOfYear, .weekOfYear], from: date).date!
@@ -77,13 +76,13 @@ extension Store {
         let dateFormatter = DateFormatter()
         switch displayMode {
             case .day:
-                dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "YYYYMd", options: 0, locale: Locale.current)
+                dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "ydMMMM", options: 0, locale: .current)
             case .week:
-                dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "YYYYM", options: 0, locale: Locale.current)
+                dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "yMMMM", options: 0, locale: .current)
             case .month:
-                dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "YYYYM", options: 0, locale: Locale.current)
+                dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "yMMMM", options: 0, locale: .current)
             case .year:
-                dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "YYYY", options: 0, locale: Locale.current)
+                dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "y", options: 0, locale: .current)
         }
         return dateFormatter
     }
@@ -95,17 +94,24 @@ extension Store {
         return dateFormatter
     }
 
+    var dayLocalFormatter: DateFormatter {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = .current
+        dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "d", options: 0, locale: .current)
+        return dateFormatter
+    }
+
     var monthFormatter: DateFormatter {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = .current
-        dateFormatter.dateFormat = "MMM"
+        dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "MMM", options: 0, locale: .current)
         return dateFormatter
     }
 
     var weekdayFormatter: DateFormatter {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = .current
-        dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "EEE", options: 0, locale: Locale.current)
+        dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "EEE", options: 0, locale: .current)
         return dateFormatter
     }
 }

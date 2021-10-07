@@ -107,8 +107,8 @@ public struct ForMonth<Data, Content>: View where Data: RandomAccessCollection, 
             ForEach(Foundation.Calendar.current.shortWeekdaySymbols, id: \.self) { weekdaySymbol in
                 VStack {
                     Text("\(weekdaySymbol)")
-                        .font(.caption)
-                        .bold()
+                        .font(.headline)
+                        .fontWeight(.regular)
                 }
             }
         }

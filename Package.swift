@@ -12,7 +12,6 @@ let package = Package(
             targets: ["Calendar"]),
     ],
     dependencies: [
-//        .package(name: "SwiftDate", url: "git@github.com:malcommac/SwiftDate.git", .upToNextMajor(from: "6.3.1")),
         .package(name: "RecurrenceRule", url: "git@github.com:1amageek/RecurrenceRule.git", .branch("main")),
         .package(name: "PageView", url: "git@github.com:1amageek/PageView.git", .branch("main")),
     ],

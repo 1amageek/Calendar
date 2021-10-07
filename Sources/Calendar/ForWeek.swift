@@ -48,13 +48,18 @@ public struct ForWeek<Data, Content>: View where Data: RandomAccessCollection, D
         return LazyVGrid(columns: dateRange.map { _ in GridItem(.flexible(), spacing: 0) }) {
             ForEach(dateRange) { date in
                 HStack {
-                    Text(date, formatter: store.dayFormatter)
-                        .font(.body)
+                    Text(date, formatter: store.dayLocalFormatter)
+                        .font(.headline)
+                        .fontWeight(.regular)
+                        .foregroundColor(store.calendar.isDateInToday(date) ? .white : nil)
                         .background {
                             if store.calendar.isDateInToday(date) {
                                 todayCircle
                             }
                         }
+                    Text(date, formatter: store.weekdayFormatter)
+                        .font(.headline)
+                        .fontWeight(.regular)
                 }
             }
         }
@@ -79,15 +84,22 @@ public struct ForWeek<Data, Content>: View where Data: RandomAccessCollection, D
         }
     }
 
+    @State var selection: Date = Date()
+
     public var body: some View {
         HStack {
             Ruler(offset: offset)
                 .padding(.top, 44)
-            PageView($store.displayedDate) {
+            TabView(selection: $selection) {
                 ForEach(DateRange(store.displayedDate, range: -100..<100, component: .weekOfYear)) { weekOfYear in
                     let dateRange = DateRange(weekOfYear, range: (0..<7), component: .day)
                     timeline(dateRange: dateRange)
+                        .tag(weekOfYear.weekOfYearTag)
                 }
+            }
+            .tabViewStyle(.page(indexDisplayMode: .never))
+            .onAppear {
+                selection = store.displayedDate
             }
         }
     }
