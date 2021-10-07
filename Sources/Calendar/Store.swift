@@ -7,36 +7,36 @@
 
 import Foundation
 import CoreGraphics
-import SwiftDate
 
 public final class Store: ObservableObject {
 
-    @Published public var displayMode: CalendarDisplayMode {
+    @Published public var displayMode: CalendarDisplayMode
+    {
         didSet {
-            self.displayedDate = Self.displayedDate(self.selectedDate, displayMode: displayMode)
+            self.displayedDate = Self.displayedDate(self.displayedDate, displayMode: displayMode)
         }
     }
 
     @Published public var displayedDate: Date
 
-    @Published public var selectedDate: Date
+    @Published public var selectedDates: [Range<Date>]
 
     public var displayedRange: Range<Date> {
         switch displayMode {
             case .day:
-                let startDate = displayedDate.dateAtStartOf(.day)
+                let startDate = calendar.dateComponents([.calendar, .timeZone, .year, .month, .day], from: displayedDate).date!
                 let endDate = startDate + 1.days
                 return startDate..<endDate
             case .week:
-                let startDate = displayedDate.dateAtStartOf(.weekOfYear)
+                let startDate = calendar.dateComponents([.calendar, .timeZone, .yearForWeekOfYear, .weekOfYear], from: displayedDate).date!
                 let endDate = startDate + 1.weeks
                 return startDate..<endDate
             case .month:
-                let startDate = displayedDate.dateAtStartOf(.month)
+                let startDate = calendar.dateComponents([.calendar, .timeZone, .year, .month], from: displayedDate).date!
                 let endDate = startDate + 1.months
                 return startDate..<endDate
             case .year:
-                let startDate = displayedDate.dateAtStartOf(.year)
+                let startDate = calendar.dateComponents([.calendar, .timeZone, .year], from: displayedDate).date!
                 let endDate = startDate + 1.years
                 return startDate..<endDate
         }
@@ -57,15 +57,16 @@ public final class Store: ObservableObject {
         let displayedDate = Self.displayedDate(today, displayMode: displayMode)
         self._displayMode = Published(initialValue: displayMode)
         self._displayedDate = Published(initialValue: displayedDate)
-        self._selectedDate = Published(initialValue: today)
+        self._selectedDates = Published(initialValue: [])
     }
 
     static func displayedDate(_ date: Date, displayMode: CalendarDisplayMode) -> Date {
+        let calendar = Foundation.Calendar(identifier: .gregorian)
         switch displayMode {
-            case .day: return date.dateAtStartOf(.day)
-            case .week: return date.dateAtStartOf(.weekOfYear)
-            case .month: return date.dateAtStartOf(.month)
-            case .year: return date.dateAtStartOf(.year)
+            case .day: return calendar.dateComponents([.calendar, .timeZone, .year, .month, .day], from: date).date!
+            case .week: return calendar.dateComponents([.calendar, .timeZone, .yearForWeekOfYear, .weekOfYear], from: date).date!
+            case .month: return calendar.dateComponents([.calendar, .timeZone, .year, .month], from: date).date!
+            case .year: return calendar.dateComponents([.calendar, .timeZone, .year], from: date).date!
         }
     }
 }
@@ -89,12 +90,21 @@ extension Store {
 
     var dayFormatter: DateFormatter {
         let dateFormatter = DateFormatter()
+        dateFormatter.locale = .current
         dateFormatter.dateFormat = "d"
+        return dateFormatter
+    }
+
+    var monthFormatter: DateFormatter {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = .current
+        dateFormatter.dateFormat = "MMM"
         return dateFormatter
     }
 
     var weekdayFormatter: DateFormatter {
         let dateFormatter = DateFormatter()
+        dateFormatter.locale = .current
         dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "EEE", options: 0, locale: Locale.current)
         return dateFormatter
     }

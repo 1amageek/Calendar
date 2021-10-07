@@ -7,14 +7,12 @@
 
 import SwiftUI
 import PageView
-import SwiftDate
 
 public struct ForWeek<Data, Content>: View where Data: RandomAccessCollection, Data.Element: CalendarItemRepresentable, Content: View {
 
 #if os(iOS)
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 #endif
-
 
     @EnvironmentObject var store: Store
 
@@ -51,11 +49,7 @@ public struct ForWeek<Data, Content>: View where Data: RandomAccessCollection, D
             ForEach(dateRange) { date in
                 HStack {
                     Text(date, formatter: store.dayFormatter)
-#if os(iOS)
-                        .font(horizontalSizeClass == .compact ? .body : .body)
-#else
                         .font(.body)
-#endif
                         .background {
                             if store.calendar.isDateInToday(date) {
                                 todayCircle
@@ -90,7 +84,7 @@ public struct ForWeek<Data, Content>: View where Data: RandomAccessCollection, D
             Ruler(offset: offset)
                 .padding(.top, 44)
             PageView($store.displayedDate) {
-                ForEach(DateRange(store.selectedDate, range: -100..<100, component: .weekOfYear)) { weekOfYear in
+                ForEach(DateRange(store.displayedDate, range: -100..<100, component: .weekOfYear)) { weekOfYear in
                     let dateRange = DateRange(weekOfYear, range: (0..<7), component: .day)
                     timeline(dateRange: dateRange)
                 }

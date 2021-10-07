@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwiftDate
 
 public struct ForYear<Data, Content>: View where Data: RandomAccessCollection, Data.Element: CalendarItemRepresentable, Content: View {
 
@@ -38,22 +37,16 @@ public struct ForYear<Data, Content>: View where Data: RandomAccessCollection, D
     }
 
     func foreground(month: Date, date: Date) -> Color? {
-        if store.calendar.isDateInToday(date) {
+        if store.calendar.isDateInToday(date) && store.calendar.component(.month, from: month) == store.calendar.component(.month, from: date) {
             return Color.white
         }
-        if month.month != date.month {
+        if store.calendar.component(.month, from: month) != store.calendar.component(.month, from: date) {
             return Color(.systemGray4)
         }
         if store.calendar.isDateInWeekend(date) {
             return Color(.systemGray)
         }
         return nil
-    }
-
-    var dateFormatter: DateFormatter {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "M月"
-        return dateFormatter
     }
 
     @ViewBuilder
@@ -75,7 +68,7 @@ public struct ForYear<Data, Content>: View where Data: RandomAccessCollection, D
             ForEach(DateRange(year, range: 0..<12, component: .month)) { month in
                 VStack(spacing: 0) {
                     HStack {
-                        Text(month, formatter: dateFormatter)
+                        Text(month, formatter: store.monthFormatter)
 #if os(iOS)
                             .font(horizontalSizeClass == .compact ? .headline : .title3)
 #else
@@ -92,7 +85,7 @@ public struct ForYear<Data, Content>: View where Data: RandomAccessCollection, D
 #endif
                             .foregroundColor(foreground(month: month, date: date))
                             .background {
-                                if store.calendar.isDateInToday(date) {
+                                if store.calendar.isDateInToday(date) && store.calendar.component(.month, from: month) == store.calendar.component(.month, from: date) {
                                     todayCircle
                                 }
                             }
@@ -109,14 +102,14 @@ public struct ForYear<Data, Content>: View where Data: RandomAccessCollection, D
             ScrollViewReader { scrollViewProxy in
                 ScrollView(showsIndicators: false) {
                     LazyVStack(spacing: spacing) {
-                        ForEach(DateRange(store.selectedDate, range: -100..<100, component: .year)) { year in
+                        ForEach(DateRange(store.displayedDate, range: -100..<100, component: .year)) { year in
                             forYear(year: year, size: proxy.size)
                                 .id(year.yearTag)
                         }
                     }
                     .compositingGroup()
                     .onAppear {
-                        scrollViewProxy.scrollTo(store.selectedDate.dateAtStartOf(.year).yearTag)
+                        scrollViewProxy.scrollTo(store.displayedDate.yearTag)
                     }
                 }
             }
@@ -182,7 +175,7 @@ struct Month<Content>: View where Content: View {
         GeometryReader { proxy in
             LazyVGrid(columns: columns, spacing: 0, pinnedViews: []) {
                 Section {
-                    ForEach(DateRange(month.dateAtStartOf(.weekOfYear), range: 0..<42, component: .day)) { date in
+                    ForEach(DateRange(store.calendar.dateComponents([.calendar, .timeZone, .yearForWeekOfYear, .weekOfYear], from: month).date!, range: 0..<42, component: .day)) { date in
                         let size = size(proxy.size)
                         content(date)
                             .frame(width: size.width, height: size.height)
@@ -197,7 +190,6 @@ struct Month<Content>: View where Content: View {
 }
 
 struct ForYear_Previews: PreviewProvider {
-
 
     static var previews: some View {
         ForYear([

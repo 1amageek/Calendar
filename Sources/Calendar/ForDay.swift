@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwiftDate
 
 public struct ForDay<Data, Content>: View where Data: RandomAccessCollection, Data.Element: CalendarItemRepresentable, Content: View {
 

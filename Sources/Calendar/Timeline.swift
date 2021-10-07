@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwiftDate
 
 public struct Timeline<Data, Content>: View where Data: RandomAccessCollection, Data.Element: TimeframeRepresentable, Content: View {
 
@@ -188,7 +187,7 @@ struct Timeline_Previews: PreviewProvider {
     }
 
     static var previews: some View {
-        let startDay = Date().dateAtStartOf(.weekOfYear)
+        let startDay = Foundation.Calendar.current.startOfDay(for: Date())
         let endDay = startDay + 1.hours
         GeometryReader { proxy in
             ScrollView(.horizontal, showsIndicators: false) {

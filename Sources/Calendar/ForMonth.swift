@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwiftDate
 
 public struct ForMonth<Data, Content>: View where Data: RandomAccessCollection, Data.Element: CalendarItemRepresentable, Content: View {
 
@@ -45,11 +44,11 @@ public struct ForMonth<Data, Content>: View where Data: RandomAccessCollection, 
     }
 
     func foreground(month: Date, date: Date) -> Color? {
-        if store.calendar.isDateInToday(date) {
+        if store.calendar.isDateInToday(date) && store.calendar.component(.month, from: month) == store.calendar.component(.month, from: date) {
             return Color.white
         }
-        if month.month != date.month {
-            return Color.secondary
+        if store.calendar.component(.month, from: month) != store.calendar.component(.month, from: date) {
+            return Color(.systemGray4)
         }
         if store.calendar.isDateInWeekend(date) {
             return Color(.systemGray)
@@ -115,6 +114,8 @@ public struct ForMonth<Data, Content>: View where Data: RandomAccessCollection, 
         }
     }
 
+    var monthRange: DateRange { DateRange(store.today, range: -100..<100, component: .weekOfYear) }
+
     public var body: some View {
         GeometryReader { proxy in
             VStack(spacing: 0) {
@@ -123,7 +124,7 @@ public struct ForMonth<Data, Content>: View where Data: RandomAccessCollection, 
                 ScrollViewReader { scrollViewProxy in
                     ScrollView(showsIndicators: false) {
                         LazyVStack(spacing: 0) {
-                            ForEach(DateRange.weekOfYear(year: store.today.year)) { weekOfYear in
+                            ForEach(monthRange) { weekOfYear in
                                 HStack(spacing: 0) {
                                     ForEach(DateRange(weekOfYear, range: 0..<7, component: .day)) { date in
                                         let size = size(proxy.size)
@@ -146,9 +147,11 @@ public struct ForMonth<Data, Content>: View where Data: RandomAccessCollection, 
                                     let height = proxy.size.height - headerHeight
                                     let cellHeight = height / 6
                                     let weekOfYear = Int(offsetY / cellHeight) + 2
-                                    let date = store.today.dateAtStartOf(.year) + weekOfYear.weeks
-                                    if store.displayedDate.month != date.month {
-                                        store.displayedDate = date
+                                    DispatchQueue.main.async {
+                                        let date = store.calendar.dateComponents([.calendar, .timeZone, .yearForWeekOfYear, .weekOfYear], from: monthRange.lowerBound).date! + weekOfYear.weeks
+                                        if store.calendar.component(.month, from: store.displayedDate) != store.calendar.component(.month, from: date) {
+                                            store.displayedDate = date
+                                        }
                                     }
                                 }
                         })

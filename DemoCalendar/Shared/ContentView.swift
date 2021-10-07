@@ -8,7 +8,6 @@
 import SwiftUI
 import Calendar
 import RecurrenceRule
-import SwiftDate
 
 struct Event: CalendarItemRepresentable {
 
@@ -31,7 +30,7 @@ struct Event: CalendarItemRepresentable {
 
     var isAllDay: Bool = false
 
-    var period: Range<Date> = Date()..<Date().date(byAdding: .day, value: 1)
+    var period: Range<Date> = Date()..<(Date() + 1.days)
 
     var timeZone: TimeZone? = TimeZone.current
 }
@@ -40,18 +39,8 @@ struct ContentView: View {
 
     @StateObject var store: Store = Store(displayMode: .month, today: Date())
 
-    var event: Event {
-        var dateComopnents = Foundation.Calendar.current.dateComponents(in: TimeZone.current, from: Date())
-        dateComopnents.hour = 9
-        let startDate = Foundation.Calendar.current.date(from: dateComopnents)!
-        let period = startDate..<(startDate + 3.hours)
-        return Event(id: "id", occurrenceDate: Date(), recurrenceRules: [
-            RecurrenceRule(frequency: .weekly, recurrenceEnd: .occurrenceCount(7), interval: 1, daysOfTheWeek: [.init(dayOfTheWeek: .monday), .init(dayOfTheWeek: .tuesday)])
-        ], period: period)
-    }
-
     var calendarItems: [CalendarItem] {
-        return RecurrenceScheduler.calendarItems(event, range: store.displayedRange)
+        return [CalendarItem(id: "id", isAllDay: false, period: Date()..<(Date() + 1.days))]
     }
 
     @State var value: Float = 0

@@ -83,8 +83,8 @@ public struct DateRange {
             case .hour: dateComponents = calendar.dateComponents([.calendar, .timeZone, .year, .month, .day, .hour], from: date)
             case .minute: dateComponents = calendar.dateComponents([.calendar, .timeZone, .year, .month, .day, .hour, .minute], from: date)
             case .second: dateComponents = calendar.dateComponents([.calendar, .timeZone, .year, .month, .day, .hour, .minute, .second], from: date)
-            case .weekOfYear: dateComponents = calendar.dateComponents([.timeZone, .yearForWeekOfYear, .weekOfYear], from: date)
-            case .weekOfMonth: dateComponents = calendar.dateComponents([.timeZone, .yearForWeekOfYear, .weekOfYear, .weekOfMonth], from: date)
+            case .weekOfYear: dateComponents = calendar.dateComponents([.calendar, .timeZone, .yearForWeekOfYear, .weekOfYear], from: date)
+            case .weekOfMonth: dateComponents = calendar.dateComponents([.calendar, .timeZone, .yearForWeekOfYear, .weekOfYear, .weekOfMonth], from: date)
         }
         self.calendar = calendar
         self.startDay = calendar.date(from: dateComponents)!
