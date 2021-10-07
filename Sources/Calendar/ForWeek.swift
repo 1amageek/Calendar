@@ -17,14 +17,20 @@ public struct ForWeek<Data, Content>: View where Data: RandomAccessCollection, D
 
     @State var offset: CGPoint = .zero
 
+    @State var selection: String
+
+    var date: Date
+
     var data: Data
 
     var spacing: CGFloat
 
     var content: (Data.Element) -> Content
 
-    public init(_ data: Data, spacing: CGFloat = 4, @ViewBuilder content: @escaping (Data.Element) -> Content) {
+    public init(_ data: Data, date: Date, spacing: CGFloat = 4, @ViewBuilder content: @escaping (Data.Element) -> Content) {
         self.data = data
+        self.date = date
+        self._selection = State(initialValue: date.weekOfYearTag)
         self.spacing = spacing
         self.content = content
     }
@@ -96,7 +102,6 @@ public struct ForWeek<Data, Content>: View where Data: RandomAccessCollection, D
                         .fontWeight(.regular)
                 }
 #endif
-
             }
         }
     }
@@ -120,23 +125,18 @@ public struct ForWeek<Data, Content>: View where Data: RandomAccessCollection, D
         }
     }
 
-    @State var selection: Date = Date()
-
     public var body: some View {
         HStack {
             Ruler(offset: offset)
                 .padding(.top, 44)
             TabView(selection: $selection) {
-                ForEach(DateRange(store.displayedDate, range: -100..<100, component: .weekOfYear)) { weekOfYear in
+                ForEach(DateRange(date, range: -100..<100, component: .weekOfYear)) { weekOfYear in
                     let dateRange = DateRange(weekOfYear, range: (0..<7), component: .day)
                     timeline(dateRange: dateRange)
                         .tag(weekOfYear.weekOfYearTag)
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
-            .onAppear {
-                selection = store.displayedDate
-            }
         }
     }
 }
@@ -146,7 +146,7 @@ struct ForWeek_Previews: PreviewProvider {
     static var previews: some View {
         ForWeek([
             CalendarItem(id: "id", period: Date()..<(Date() + 1.hours))
-        ]) { date in
+        ], date: Date()) { date in
             RoundedRectangle(cornerRadius: 8)
                 .fill(Color.green)
                 .padding(1)                

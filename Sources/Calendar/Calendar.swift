@@ -9,6 +9,7 @@ import SwiftUI
 import RecurrenceRule
 
 public enum CalendarDisplayMode: CaseIterable {
+
     case day
     case week
     case month
@@ -89,7 +90,7 @@ public struct Calendar<Data, Content>: View where Data: RandomAccessCollection, 
     }
 
     var forWeek: some View {
-        ForWeek(data) { item in
+        ForWeek(data, date: store.displayedDate) { item in
             content(item)
         }
     }
