@@ -24,7 +24,7 @@ public enum DateTag {
     case year(Date)
 
     var id: String {
-        let calendar = Foundation.Calendar(identifier: .gregorian)
+        let calendar = Foundation.Calendar.autoupdatingCurrent
         switch self {
             case .day(let date):
                 let dateComponents = calendar.dateComponents([.year, .month, .day], from: date)
@@ -70,11 +70,10 @@ public struct DateRange {
 
     @inlinable public var isEmpty: Bool { lowerBound == upperBound }
 
-    public init(_ date: Date = Date(), range: Range<Int>, component: Component = .day) {
+    public init(_ date: Date = Date(), range: Range<Int>, component: Component = .day, calendar: Foundation.Calendar = Foundation.Calendar.autoupdatingCurrent) {
         self.date = date
         self.range = range
         self.component = component
-        let calendar = Foundation.Calendar(identifier: .gregorian)
         var dateComponents: DateComponents
         switch component {
             case .year: dateComponents = calendar.dateComponents([.calendar, .timeZone, .year], from: date)
@@ -91,7 +90,7 @@ public struct DateRange {
     }
 
     public static func year(range: Range<Int>) -> Self {
-        let calendar = Foundation.Calendar(identifier: .gregorian)
+        let calendar = Foundation.Calendar.autoupdatingCurrent
         let dateComponents = DateComponents(calendar: calendar, timeZone: TimeZone.current, year: range.lowerBound)
         let date = calendar.date(from: dateComponents)!
         let lowerBound = 0
@@ -100,7 +99,7 @@ public struct DateRange {
     }
 
     public static func weekOfYear(year: Int) -> Self {
-        let calendar = Foundation.Calendar(identifier: .gregorian)
+        let calendar = Foundation.Calendar.autoupdatingCurrent
         let dateComponents = DateComponents(calendar: calendar, timeZone: TimeZone.current, year: year)
         let date = calendar.date(from: dateComponents)!
         let range = calendar.range(of: .weekOfYear, in: .year, for: date)!

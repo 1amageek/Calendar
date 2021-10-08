@@ -9,8 +9,38 @@ import Foundation
 
 public extension Date {
 
+    var calendar: Foundation.Calendar { Foundation.Calendar.autoupdatingCurrent }
+
+    // MARK: - Date Components
+    var year: Int { calendar.component(.year, from: self) }
+
+    /// Represented month
+    var month: Int { calendar.component(.month, from: self) }
+
+    /// Day unit of the receiver.
+    var day: Int { calendar.component(.day, from: self) }
+
+    /// Day of year unit of the receiver
+    var dayOfYear: Int { calendar.ordinality(of: .day, in: .year, for: self)! }
+
+    /// Hour unit of the receiver.
+    var hour: Int { calendar.component(.hour, from: self) }
+
+    /// Minute unit of the receiver.
+    var minute: Int { calendar.component(.minute, from: self) }
+
+    /// Second unit of the receiver.
+    var second: Int { calendar.component(.second, from: self) }
+
+    /// Nanosecond unit of the receiver.
+    var nanosecond: Int { calendar.component(.nanosecond, from: self) }
+
+    /// Weekday unit of the receiver.
+    /// The weekday units are the numbers 1-N (where for the Gregorian calendar N=7 and 1 is Sunday).
+    var weekday: Int { calendar.component(.weekday, from: self) }
+
     func dateAtStartOf(_ unit: Foundation.Calendar.Component) -> Date {
-        let calendar = Foundation.Calendar.current
+        let calendar = Foundation.Calendar.autoupdatingCurrent
         switch unit {
             case .era: return calendar.dateComponents([.era], from: self).date!
             case .year: return calendar.dateComponents([.era, .calendar, .timeZone, .year], from: self).date!

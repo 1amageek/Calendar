@@ -25,7 +25,7 @@ public final class RecurrenceScheduler {
             return []
         }
 
-        let calendar = Foundation.Calendar(identifier: .gregorian)
+        let calendar = Foundation.Calendar.autoupdatingCurrent
         var calendarItems: [CalendarItem] = []
 
         for rule in item.recurrenceRules {
@@ -50,7 +50,6 @@ public final class RecurrenceScheduler {
 
             func frequencyCountAndRemainder(frequency: RecurrenceRule.Frequency, from: Date, to: Date, interval: Int) -> (Int, Int) {
                 var difference: Int = 0
-                let calendar: Foundation.Calendar = Foundation.Calendar(identifier: .gregorian)
                 switch frequency {
                     case .daily: difference = calendar.dateComponents([.day], from: from.dateAtStartOf(.day), to: to.dateAtStartOf(.day)).day!
                     case .weekly: difference = calendar.dateComponents([.weekOfYear], from: from.dateAtStartOf(.weekOfYear), to: to.dateAtStartOf(.weekOfYear)).weekOfYear!
