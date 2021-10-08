@@ -92,7 +92,7 @@ struct ContentView: View {
                     }
 
                     Button("Today") {
-
+                        store.scrollToToday()
                     }
 
                     Button {

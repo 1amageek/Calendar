@@ -141,6 +141,9 @@ public struct ForMonth<Data, Content>: View where Data: RandomAccessCollection, 
                         .compositingGroup()
                         .onAppear {
                             scrollViewProxy.scrollTo(store.displayedDate.weekOfYearTag)
+                            store.forMonthScrollToTodayAction = {
+                                scrollViewProxy.scrollTo(store.today.weekOfYearTag)
+                            }
                         }
                         .background(GeometryReader { backgroundProxy in
                             Rectangle()

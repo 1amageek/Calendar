@@ -7,6 +7,7 @@
 
 import Foundation
 import CoreGraphics
+import SwiftUI
 
 public final class Store: ObservableObject {
 
@@ -15,6 +16,59 @@ public final class Store: ObservableObject {
     @Published public var displayedDate: Date
 
     @Published public var selectedDates: [Range<Date>]
+
+    public var today: Date
+
+    public var headerTitle: String { titleFormatter.string(from: displayedDate) }
+
+    public var calendar: Foundation.Calendar
+
+    public var timeZone: TimeZone
+
+    var forYearScrollToTodayAction: (() -> Void)!
+
+    var forMonthScrollToTodayAction: (() -> Void)!
+
+    var forWeekScrollToTodayAction: (() -> Void)!
+
+    public init(
+        displayMode: CalendarDisplayMode = .year,
+        today: Date = Date(),
+        calendar: Foundation.Calendar = Foundation.Calendar.autoupdatingCurrent,
+        timeZone: TimeZone = TimeZone.current
+    ) {
+        self.today = today
+        self.calendar = calendar
+        self.timeZone = timeZone
+        let displayedDate = Self.displayedDate(today, displayMode: displayMode, calendar: calendar)
+        self._displayMode = Published(initialValue: displayMode)
+        self._displayedDate = Published(initialValue: displayedDate)
+        self._selectedDates = Published(initialValue: [])
+    }
+
+    public func scrollToToday() {
+        withAnimation {
+            switch displayMode {
+                case .day: break
+                case .week: forWeekScrollToTodayAction()
+                case .month: forMonthScrollToTodayAction()
+                case .year: forYearScrollToTodayAction()
+            }
+        }
+    }
+
+}
+
+extension Store {
+
+    static func displayedDate(_ date: Date, displayMode: CalendarDisplayMode, calendar: Foundation.Calendar) -> Date {
+        switch displayMode {
+            case .day: return calendar.dateComponents([.calendar, .timeZone, .year, .month, .day], from: date).date!
+            case .week: return calendar.dateComponents([.calendar, .timeZone, .yearForWeekOfYear, .weekOfYear], from: date).date!
+            case .month: return calendar.dateComponents([.calendar, .timeZone, .year, .month], from: date).date!
+            case .year: return calendar.dateComponents([.calendar, .timeZone, .year], from: date).date!
+        }
+    }
 
     public var displayedRange: Range<Date> {
         switch displayMode {
@@ -36,41 +90,6 @@ public final class Store: ObservableObject {
                 return startDate..<endDate
         }
     }
-
-    public var today: Date
-
-    public var headerTitle: String { titleFormatter.string(from: displayedDate) }
-
-    public var calendar: Foundation.Calendar
-
-    public var timeZone: TimeZone
-
-    public init(
-        displayMode: CalendarDisplayMode = .year,
-        today: Date = Date(),
-        calendar: Foundation.Calendar = Foundation.Calendar.autoupdatingCurrent,
-        timeZone: TimeZone = TimeZone.current
-    ) {
-        self.today = today
-        self.calendar = calendar
-        self.timeZone = timeZone
-        let displayedDate = Self.displayedDate(today, displayMode: displayMode, calendar: calendar)
-        self._displayMode = Published(initialValue: displayMode)
-        self._displayedDate = Published(initialValue: displayedDate)
-        self._selectedDates = Published(initialValue: [])
-    }
-
-    static func displayedDate(_ date: Date, displayMode: CalendarDisplayMode, calendar: Foundation.Calendar) -> Date {
-        switch displayMode {
-            case .day: return calendar.dateComponents([.calendar, .timeZone, .year, .month, .day], from: date).date!
-            case .week: return calendar.dateComponents([.calendar, .timeZone, .yearForWeekOfYear, .weekOfYear], from: date).date!
-            case .month: return calendar.dateComponents([.calendar, .timeZone, .year, .month], from: date).date!
-            case .year: return calendar.dateComponents([.calendar, .timeZone, .year], from: date).date!
-        }
-    }
-}
-
-extension Store {
 
     var titleFormatter: DateFormatter {
         let dateFormatter = DateFormatter()

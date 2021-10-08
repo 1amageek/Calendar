@@ -110,6 +110,9 @@ public struct ForYear<Data, Content>: View where Data: RandomAccessCollection, D
                     .compositingGroup()
                     .onAppear {
                         scrollViewProxy.scrollTo(store.displayedDate.yearTag)
+                        store.forYearScrollToTodayAction = {
+                            scrollViewProxy.scrollTo(store.today.yearTag)
+                        }
                     }
                 }
             }

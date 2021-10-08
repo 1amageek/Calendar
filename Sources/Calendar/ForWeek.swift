@@ -137,6 +137,11 @@ public struct ForWeek<Data, Content>: View where Data: RandomAccessCollection, D
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
+            .onAppear {
+                store.forWeekScrollToTodayAction = {
+                    selection = store.today.weekOfYearTag
+                }
+            }
         }
     }
 }
