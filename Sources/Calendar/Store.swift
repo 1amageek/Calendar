@@ -59,11 +59,6 @@ public final class Store: ObservableObject {
         self._displayedDate = Published(initialValue: displayedDate)
         self._selectedDates = Published(initialValue: [])
     }
-//
-//    public func setDisplayMode(_ displayMode: CalendarDisplayMode, date: Date) {
-//        self.displayMode = displayMode
-//        self.displayedDate = Self.displayedDate(date, displayMode: displayMode, calendar: calendar)
-//    }
 
     static func displayedDate(_ date: Date, displayMode: CalendarDisplayMode, calendar: Foundation.Calendar) -> Date {
         switch displayMode {
