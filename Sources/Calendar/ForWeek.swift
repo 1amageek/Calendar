@@ -136,7 +136,9 @@ public struct ForWeek<Data, Content>: View where Data: RandomAccessCollection, D
                         .tag(weekOfYear.weekOfYearTag)
                 }
             }
+#if os(iOS)
             .tabViewStyle(.page(indexDisplayMode: .never))
+#endif
             .onAppear {
                 store.forWeekScrollToTodayAction = {
                     selection = store.today.weekOfYearTag

@@ -41,7 +41,11 @@ public struct ForYear<Data, Content>: View where Data: RandomAccessCollection, D
             return Color.white
         }
         if store.calendar.component(.month, from: month) != store.calendar.component(.month, from: date) {
+#if os(iOS)
             return Color(.systemGray4)
+#else
+            return Color(.systemGray)
+#endif
         }
         if store.calendar.isDateInWeekend(date) {
             return Color(.systemGray)
