@@ -7,6 +7,7 @@
 
 import SwiftUI
 import RecurrenceRule
+@_exported import DateExtension
 
 public enum CalendarDisplayMode: CaseIterable {
 

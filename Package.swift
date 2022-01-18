@@ -10,14 +10,20 @@ let package = Package(
         .library(
             name: "Calendar",
             targets: ["Calendar"]),
+        .library(
+            name: "DateExtension",
+            targets: ["DateExtension"])
     ],
     dependencies: [
         .package(name: "RecurrenceRule", url: "git@github.com:1amageek/RecurrenceRule.git", .branch("main")),
     ],
     targets: [
         .target(
+            name: "DateExtension",
+            dependencies: []),
+        .target(
             name: "Calendar",
-            dependencies: ["RecurrenceRule"]),
+            dependencies: ["RecurrenceRule", "DateExtension"]),
         .testTarget(
             name: "CalendarTests",
             dependencies: ["Calendar"]),
