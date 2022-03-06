@@ -70,7 +70,7 @@ struct ForDay_Previews: PreviewProvider {
 
     static var previews: some View {
         ForDay([
-            CalendarItem(id: "id", period: Date()..<(Date() + 1.hours))
+            CalendarItem(id: "id", startDate: Date(), endDate: (Date() + 1.hours))
         ]) { date in
             RoundedRectangle(cornerRadius: 8)
                 .fill(Color.green)

@@ -8,6 +8,7 @@
 import Foundation
 
 public protocol TimeframeRepresentable: Hashable {
-    var period: Range<Date> { get }
+    var startDate: Date { get }
+    var endDate: Date { get }
     var timeZone: TimeZone? { get }
 }

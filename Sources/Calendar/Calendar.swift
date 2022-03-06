@@ -133,7 +133,8 @@ struct Calendar_Previews: PreviewProvider {
 
         func hash(into hasher: inout Hasher) {
             hasher.combine(id)
-            hasher.combine(period)
+            hasher.combine(startDate)
+            hasher.combine(endDate)
         }
 
         var id: String
@@ -150,7 +151,9 @@ struct Calendar_Previews: PreviewProvider {
 
         var isAllDay: Bool = false
 
-        var period: Range<Date> = Date()..<(Date() + 1.hours)
+        var startDate: Date = Date()
+
+        var endDate: Date = Date()
 
         var timeZone: TimeZone? = TimeZone.current
     }
@@ -162,9 +165,10 @@ struct Calendar_Previews: PreviewProvider {
         var events: [Event] {
             let dateComopnents = store.calendar.dateComponents(in: TimeZone.current, from: Date())
             let startDate = store.calendar.date(from: dateComopnents)! - 6.hours
+            let endDate = startDate + 3.hours
             return [
-                Event(id: "0", occurrenceDate: startDate, period: startDate..<(startDate + 1.hours)),
-                Event(id: "1", occurrenceDate: startDate, period: (startDate + 2.hours)..<(startDate + 2.hours))
+                Event(id: "0", occurrenceDate: startDate, startDate: startDate, endDate: endDate),
+                Event(id: "1", occurrenceDate: startDate, startDate: startDate, endDate: endDate)
             ]
         }
 

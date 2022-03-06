@@ -152,7 +152,7 @@ struct ForWeek_Previews: PreviewProvider {
 
     static var previews: some View {
         ForWeek([
-            CalendarItem(id: "id", period: Date()..<(Date() + 1.hours))
+            CalendarItem(id: "id", startDate: Date(), endDate: (Date() + 1.hours))
         ], date: Date()) { date in
             RoundedRectangle(cornerRadius: 8)
                 .fill(Color.green)

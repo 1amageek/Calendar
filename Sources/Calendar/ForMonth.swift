@@ -92,7 +92,7 @@ public struct ForMonth<Data, Content>: View where Data: RandomAccessCollection, 
                 .padding()
             #endif
 
-            let items = data.filter({ store.calendar.isDate($0.period.lowerBound, inSameDayAs: date) || store.calendar.isDate($0.period.upperBound, inSameDayAs: date) })
+            let items = data.filter({ store.calendar.isDate($0.startDate, inSameDayAs: date) || store.calendar.isDate($0.endDate, inSameDayAs: date) })
             VStack(spacing: 1) {
                 ForEach(items.prefix(4), id: \.self) { item in
                     content(item)
@@ -214,7 +214,7 @@ struct ForMonth_Previews: PreviewProvider {
             }
             .padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
             ForMonth([
-                CalendarItem(id: "id", period: Date()..<(Date() + 1.hours))
+                CalendarItem(id: "id", startDate: Date(), endDate: (Date() + 1.hours))
             ]) { date in
                 Rectangle()
                     .padding(4)

@@ -40,20 +40,21 @@ public struct Timeline<Data, Content>: View where Data: RandomAccessCollection, 
         }
         var items: [Item] = []
         self.data.forEach { dataItem in
+            let period = dataItem.startDate..<dataItem.endDate
             var item: Item = Item(element: dataItem)
             separations.forEach { number in
-                if dataItem.period.contains(number) {
+                if period.contains(number) {
                     if let last = item.ranges.last {
                         item.ranges.append((last.upperBound..<number))
-                    } else if dataItem.period.lowerBound < number {
-                        item.ranges.append((dataItem.period.lowerBound..<number))
+                    } else if period.lowerBound < number {
+                        item.ranges.append((period.lowerBound..<number))
                     }
-                } else if let last = item.ranges.last, last.upperBound < dataItem.period.upperBound {
-                    item.ranges.append((last.upperBound..<dataItem.period.upperBound))
+                } else if let last = item.ranges.last, last.upperBound < period.upperBound {
+                    item.ranges.append((last.upperBound..<period.upperBound))
                 }
             }
             if item.ranges.isEmpty {
-                item.ranges.append(dataItem.period)
+                item.ranges.append(period)
             }
             items.append(item)
         }
@@ -177,7 +178,8 @@ struct Timeline_Previews: PreviewProvider {
 
     struct Item: TimeframeRepresentable, Hashable {
         var id: String
-        var period: Range<Date>
+        var startDate: Date
+        var endDate: Date
         var timeZone: TimeZone? = TimeZone.current
     }
 
@@ -194,8 +196,8 @@ struct Timeline_Previews: PreviewProvider {
                 LazyHGrid(rows: [GridItem(.fixed(proxy.size.height))]) {
                     ForEach(range) { weekOfYear in
                         Timeline([
-                            Item(id: "0", period: startDay..<endDay),
-                            Item(id: "1", period: (endDay + 1.hours)..<(endDay + 3.hours)),
+                            Item(id: "0", startDate: startDay, endDate: endDay),
+                            Item(id: "1", startDate: startDay, endDate: endDay)
                         ], range: startDay..<(startDay + 1.days), columns: 7) { index in
                             RoundedRectangle(cornerRadius: 8)
                                 .fill(Color.green)

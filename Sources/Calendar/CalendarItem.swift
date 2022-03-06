@@ -7,26 +7,29 @@
 
 import Foundation
 
-
 public struct CalendarItem: CalendarItemRepresentable, Codable {
 
     public var id: String
 
     public var isAllDay: Bool
 
-    public var period: Range<Date>
+    public var startDate: Date
+
+    public var endDate: Date
 
     public var timeZone: TimeZone?
 
     public init(
         id: String,
         isAllDay: Bool = false,
-        period: Range<Date>,
+        startDate: Date,
+        endDate: Date,
         timeZone: TimeZone? = TimeZone.current
     ) {
         self.id = id
         self.isAllDay = isAllDay
-        self.period = period
+        self.startDate = startDate
+        self.endDate = endDate
         self.timeZone = timeZone
     }
 }
